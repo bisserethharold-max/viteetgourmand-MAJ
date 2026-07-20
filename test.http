@@ -1,0 +1,10 @@
+POST http://localhost:3000/api/auth/inscription
+Content-Type: application/json
+
+{
+    "nom": "Harold Test",
+    "email": "harold.test@exemple.com",
+    "mot_de_passe": "super_secret_123",
+    "telephone": "0612345678",
+    "adresse": "123 Rue de la Gastronomie, Paris"
+}

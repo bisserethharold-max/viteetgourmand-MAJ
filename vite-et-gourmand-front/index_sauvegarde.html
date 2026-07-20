@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vite et Gourmand - Traiteur</title>
+  <!-- Tailwind CSS pour un design ultra-pro moderne -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Importation de la police Playfair Display depuis Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+  <!-- Icônes Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Applique Playfair Display à absolument TOUT le site */
+    html, body, button, input, textarea, select {
+      font-family: 'Playfair Display', Georgia, serif !important;
+    }
+    .canva-button { 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    }
+  </style>
+</head>
+<body class="bg-stone-50/50 text-stone-800 antialiased pt-20">
+
+  <!-- ========================================================================= -->
+  <!-- 1. BARRE DE NAVIGATION FIXE (STICKY NAV) -->
+  <!-- ========================================================================= -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <a href="#" class="font-serif text-2xl font-bold tracking-tight text-[#243029]">Vite et Gourmand</a>
+
+      <!-- Menu PC -->
+      <div class="hidden md:flex items-center gap-8 font-medium text-stone-600">
+        <a href="#a-propos" class="hover:text-[#8f3d35] transition">À Propos</a>
+        <a href="#carte" class="hover:text-[#8f3d35] transition">La Carte</a>
+        <a href="#galerie" class="hover:text-[#8f3d35] transition">Galerie</a>
+        <a href="#contact" class="hover:text-[#8f3d35] transition">Contact & Devis</a>
+      </div>
+
+      <!-- Actions de droite -->
+      <div class="flex items-center gap-4">
+        <div id="user-profile-zone">
+          <button onclick="toggleModal('login-modal')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">
+            <i data-lucide="user" class="w-4 h-4"></i> Connexion
+          </button>
+        </div>
+
+        <button onclick="toggleDrawer('cart-drawer')" class="relative p-2.5 text-stone-700 hover:text-[#8f3d35] transition bg-stone-100 rounded-full">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span id="global-cart-count" class="absolute -top-1 -right-1 bg-[#8f3d35] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+        </button>
+
+        <button id="burger-btn" class="md:hidden p-2 text-stone-700 hover:bg-stone-100 rounded-lg transition">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menu Mobile -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-stone-100 px-4 py-4 space-y-2 shadow-lg">
+      <a href="#a-propos" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">À Propos</a>
+      <a href="#carte" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">La Carte</a>
+      <a href="#galerie" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Galerie</a>
+      <a href="#contact" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Contact & Devis</a>
+    </div>
+  </nav>
+
+  <!-- ========================================================================= -->
+  <!-- 2. CONSOLE LOGIQUE MÉTIER DYNAMIQUE (ADMIN / EMPLOYE / CLIENT) -->
+  <!-- ========================================================================= -->
+  <div id="business-dashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="bg-stone-900 text-white p-6 rounded-2xl shadow-xl border border-stone-800">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-stone-800 pb-4 mb-4 gap-4">
+        <div>
+          <span id="dashboard-role-badge" class="text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"></span>
+          <h2 class="text-xl font-bold mt-1.5">Espace : <span id="dashboard-user-name" class="font-normal text-stone-400"></span></h2>
+        </div>
+        <button onclick="simulateLogout()" class="text-xs bg-stone-800 hover:bg-stone-700 text-stone-300 px-4 py-2 rounded-xl transition flex items-center gap-2 border border-stone-700">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Déconnexion
+        </button>
+      </div>
+      <div id="dashboard-content"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. SECTIONS DE CONTENU DU DEFILLEMENT -->
+  <!-- ========================================================================= -->
+
+  <!-- SECTION HERO -->
+<!-- SECTION HERO -->
+  <header class="relative bg-cover bg-center bg-no-repeat text-white overflow-hidden py-32 px-4 sm:px-6 lg:px-8" style="background-image: url('https://images.unsplash.com/photo-1695654400762-b92c421711be?q=80&w=1600&auto=format&fit=crop');">
+    <!-- Voile noir transparent pour garantir la lisibilité du texte -->
+    <div class="absolute inset-0 bg-black/50 z-0"></div>
+
+    <div class="max-w-5xl mx-auto text-center relative z-10">
+      <span class="text-amber-400 font-semibold tracking-widest text-xs uppercase bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-xs">Artisan & Traiteur</span>
+      <p class="text-stone-200 text-lg max-w-2xl mx-auto mb-8 drop-shadow-md">??????</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="#carte" class="bg-amber-500 hover:bg-amber-600 text-stone-900 font-bold px-8 py-3.5 rounded-full canva-button shadow-lg shadow-amber-500/20">Découvrir la Carte</a>
+        <a href="#contact" class="bg-white/20 hover:bg-white/30 text-white font-semibold px-8 py-3.5 rounded-full border border-white/30 backdrop-blur-sm transition">Demander un Devis</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECTION À PROPOS -->
+  <section id="a-propos" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Notre Histoire</span>
+        <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-2 mb-6">Une passion culinaire, des engagements locaux</h2>
+        <p class="text-stone-600 mb-4 leading-relaxed">Depuis 2001, nous transformons vos événements en souvenirs gourmands tout au long de l’année pour vos baptêmes, mariages, réceptions d’entreprise, fêtes privées. Nous sommes Julie et José, traiteur de l’entreprise « Vite et Gourmand », pour vous servir à Bordeaux.</p>
+        <p class="text-stone-600 mb-6 leading-relaxed">Nos menus s’adaptent aux saisons et sont soigneusement élaborés en utilisant des produits frais et locaux de notre région avec une touche ensoleillée des îles. Nos créations faites par notre équipe feront honneur à vos apéritifs, brunchs, déjeuners, dîners et à un service à table si besoin. Nous respectons le régime alimentaire à la demande de nos clients.</p>
+      </div>
+      <div class="relative">
+        <img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=800&auto=format&fit=crop" alt="Cuisine de Chef" class="rounded-2xl shadow-xl w-full object-cover h-96">
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION LA CARTE (INTERACTIVE) -->
+  <section id="carte" class="py-20 bg-stone-100/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+      <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Prestations & Menus</span>
+      <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-2">Commandez ou réservez vos formules</h2>
+      <p class="text-stone-500 mt-2">Ajoutez des produits au panier pour générer une simulation instantanée.</p>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Item 1 -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-stone-200/60 flex flex-col justify-between">
+        <div>
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop" alt="Cocktail" class="rounded-xl w-full h-48 object-cover mb-4">
+          <span class="bg-red-50 text-[#8f3d35] font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">Cocktail</span>
+          <h3 class="text-lg font-bold mt-2 text-stone-900 item-name">Le Cocktail Épicurien</h3>
+          <p class="text-sm text-stone-500 mt-1">Assortiment fin de 18 pièces salées et sucrées haut de gamme par personne.</p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
+          <span class="text-lg font-black text-stone-900 price-tag" id="price-Cocktail">45,00 €</span>
+          <button onclick="addToCart('Le Cocktail Épicurien', 45)" class="bg-[#243029] hover:bg-[#8f3d35] text-white px-4 py-2 rounded-xl text-xs font-bold canva-button flex items-center gap-1.5"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Ajouter</button>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-stone-200/60 flex flex-col justify-between">
+        <div>
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop" alt="Gastronomique" class="rounded-xl w-full h-48 object-cover mb-4">
+          <span class="bg-amber-50 text-amber-800 font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">Assis</span>
+          <h3 class="text-lg font-bold mt-2 text-stone-900 item-name">Le Menu Tentation</h3>
+          <p class="text-sm text-stone-500 mt-1">Entrée raffinée, plat d'exception signature et déclinaison autour du chocolat.</p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
+          <span class="text-lg font-black text-stone-900 price-tag" id="price-Tentation">69,00 €</span>
+          <button onclick="addToCart('Le Menu Tentation', 69)" class="bg-[#243029] hover:bg-[#8f3d35] text-white px-4 py-2 rounded-xl text-xs font-bold canva-button flex items-center gap-1.5"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Ajouter</button>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-stone-200/60 flex flex-col justify-between">
+        <div>
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=600&auto=format&fit=crop" alt="Plateau" class="rounded-xl w-full h-48 object-cover mb-4">
+          <span class="bg-blue-50 text-blue-800 font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">À Emporter</span>
+          <h3 class="text-lg font-bold mt-2 text-stone-900 item-name">Plateau Apéritif Dinatoire</h3>
+          <p class="text-sm text-stone-500 mt-1">Plateau bois garni prêt à poser : charcuterie ibérique, fromages affinés.</p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
+          <span class="text-lg font-black text-stone-900 price-tag" id="price-Plateau">32,00 €</span>
+          <button onclick="addToCart('Plateau Apéritif Dinatoire', 32)" class="bg-[#243029] hover:bg-[#8f3d35] text-white px-4 py-2 rounded-xl text-xs font-bold canva-button flex items-center gap-1.5"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION GALERIE PHOTOS -->
+  <section id="galerie" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Immersion Visuelle</span>
+      <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-2">Le soin du détail en images</h2>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Buffet">
+      <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Assiette">
+      <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Cocktail">
+      <img src="https://images.unsplash.com/photo-1516685018646-549198525c1b?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Dessert">
+    </div>
+  </section>
+
+  <!-- SECTION FORMULAIRE CONTACT / DEVIS -->
+  <section id="contact" class="py-20 bg-stone-900 text-white relative">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <span class="text-amber-400 font-bold text-xs uppercase tracking-wider">Votre Projet</span>
+        <h2 class="text-3xl font-serif font-bold text-white mt-1">Concevons votre menu idéal</h2>
+        <p class="text-stone-400 text-sm mt-2">Nos conseillers et chefs vous établissent un chiffrage personnalisé sous 24 heures.</p>
+      </div>
+
+      <form id="request-form" class="space-y-6 bg-white/5 p-8 rounded-2xl border border-white/10 backdrop-blur-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-300 mb-2">Nom ou Entreprise *</label>
+            <input type="text" id="form-name" required class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 text-sm" placeholder="Ex: Marie Dupont">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-300 mb-2">Adresse E-mail *</label>
+            <input type="email" id="form-email" required class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 text-sm" placeholder="Ex: marie@exemple.com">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-300 mb-2">Détails de l'événement</label>
+          <textarea id="request-details" rows="4" class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 text-sm" placeholder="Indiquez ici le nombre d'invités, le lieu, la date voulue ou vos contraintes spécifiques..."></textarea>
+        </div>
+
+        <button type="submit" id="submit-request" class="w-full bg-amber-500 hover:bg-amber-600 text-stone-900 py-3.5 rounded-xl font-bold canva-button flex items-center justify-center gap-2">
+          <span class="submit-idle">Envoyer ma Demande de Projet</span>
+        </button>
+        <div id="form-message" class="hidden text-center text-sm font-semibold p-4 rounded-xl"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-stone-950 text-stone-500 py-8 border-t border-stone-900 text-center text-xs">
+    <p>&copy; 2026 Vite et Gourmand - Traiteur. Tous droits réservés.</p>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- 4. COMPOSANT CACHÉ : PANIER LATÉRAL (DRAWER) -->
+  <!-- ========================================================================= -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none overflow-hidden hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-stone-900/60 opacity-100 transition-opacity pointer-events-auto" onclick="toggleDrawer('cart-drawer')"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pointer-events-auto">
+      <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-stone-100 flex items-center justify-between bg-stone-50">
+          <h2 class="text-base font-bold text-stone-900 flex items-center gap-2"><i data-lucide="shopping-bag" class="text-[#8f3d35] w-5 h-5"></i> Votre Sélection</h2>
+          <button onclick="toggleDrawer('cart-drawer')" class="p-2 text-stone-400 hover:text-stone-600 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <!-- Conteneur d'articles -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-4" id="cart-items-list">
+          <p class="text-stone-400 text-center py-8 text-sm">Sélectionnez des formules sur la carte pour les ajouter.</p>
+        </div>
+        <!-- Pied du panier -->
+        <div class="p-6 border-t border-stone-100 bg-stone-50/80">
+          <div class="flex justify-between text-sm font-bold text-stone-900 mb-4">
+            <p>Montant total (TVA incluse)</p>
+            <p id="cart-total-price" class="text-lg font-black text-[#8f3d35]">0,00 €</p>
+          </div>
+          <button onclick="checkoutCart()" class="w-full bg-[#243029] hover:bg-[#34453b] text-white py-3.5 rounded-xl font-bold canva-button text-sm tracking-wide">Injecter dans mon devis</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 5. COMPOSANT CACHÉ : INTERFACE CONNEXION RÔLES (MODAL) -->
+  <!-- ========================================================================= -->
+  <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4">
+    <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-xs" onclick="toggleModal('login-modal')"></div>
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl z-10 relative border border-stone-100">
+      <button onclick="toggleModal('login-modal')" class="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+      <h3 class="text-lg font-serif font-bold text-stone-900 mb-1">Authentification Portail</h3>
+      <p class="text-xs text-stone-500 mb-5">Sélectionnez un profil pour tester la logique métier associée :</p>
+      
+      <div class="space-y-2.5">
+        <button onclick="simulateLogin('client', 'Marie Dupont')" class="w-full text-left p-3.5 border border-stone-200 rounded-xl hover:border-[#8f3d35] hover:bg-red-50/20 transition flex items-center justify-between group">
+          <div><p class="font-bold text-xs text-stone-900">Espace Client Souhaité</p><p class="text-[11px] text-stone-500">Suivi des points et commandes en cours</p></div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-stone-400 group-hover:translate-x-0.5 transition"></i>
+        </button>
+        <button onclick="simulateLogin('employe', 'Marc (Cuisine)')" class="w-full text-left p-3.5 border border-stone-200 rounded-xl hover:border-blue-500 hover:bg-blue-50/20 transition flex items-center justify-between group">
+          <div><p class="font-bold text-xs text-stone-900">Espace Employé de Cuisine</p><p class="text-[11px] text-stone-500">Fiches de production et bons de livraison</p></div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-stone-400 group-hover:translate-x-0.5 transition"></i>
+        </button>
+        <button onclick="simulateLogin('admin', 'Directeur Général')" class="w-full text-left p-3.5 border border-stone-200 rounded-xl hover:border-emerald-600 hover:bg-emerald-50/20 transition flex items-center justify-between group">
+          <div><p class="font-bold text-xs text-stone-900">Espace Administrateur</p><p class="text-[11px] text-stone-500">Édition des prix de la carte et du chiffre</p></div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-stone-400 group-hover:translate-x-0.5 transition"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 6. LOGIQUE MÉTIER & SYSTÈME JAVASCRIPT -->
+  <!-- ========================================================================= -->
+  <script>
+    // Initialisation des icônes au chargement initial
+    window.addEventListener('DOMContentLoaded', () => {
+      window.lucide.createIcons();
+    });
+
+    // Variables d'état (Global Application State)
+    let currentUser = null;
+    let cart = [];
+
+    // Table de prix dynamique pour illustrer la logique métier admin
+    let dynamicPrices = {
+      "Le Cocktail Épicurien": 45,
+      "Le Menu Tentation": 69,
+      "Plateau Apéritif Dinatoire": 32
+    };
+
+    // Gestion de l'affichage des fenêtres
+    function toggleDrawer(id) { document.getElementById(id).classList.toggle('hidden'); }
+    function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
+
+    // Activation du menu burger sur mobile
+    document.getElementById('burger-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+
+    // Fermeture automatique du menu mobile lors du clic sur un lien d'ancre
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+      link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
+    });
+
+    // AJOUT AU PANIER LATÉRAL (LOGIQUE PANIER)
+    function addToCart(name, price) {
+      const activePrice = dynamicPrices[name] || price;
+      const existingProduct = cart.find(item => item.name === name);
+      
+      if (existingProduct) {
+        existingProduct.quantity += 1;
+      } else {
+        cart.push({ name, price: activePrice, quantity: 1 });
+      }
+      renderCart();
+      
+      document.getElementById('cart-drawer').classList.remove('hidden');
+    }
+
+    function changeQuantity(name, change) {
+      const product = cart.find(item => item.name === name);
+      if (product) {
+        product.quantity += change;
+        if (product.quantity <= 0) {
+          cart = cart.filter(item => item.name !== name);
+        }
+      }
+      renderCart();
+    }
+
+    // CALCUL DU TOTAL ET RENDU DU PANIER
+    function renderCart() {
+      const listContainer = document.getElementById('cart-items-list');
+      const countBadge = document.getElementById('global-cart-count');
+      const totalDisplay = document.getElementById('cart-total-price');
+      
+      if (cart.length === 0) {
+        listContainer.innerHTML = `<p class="text-stone-400 text-center py-8 text-sm">Sélectionnez des formules sur la carte pour les ajouter.</p>`;
+        countBadge.textContent = "0";
+        totalDisplay.textContent = "0,00 €";
+        return;
+      }
+
+      let total = 0;
+      let totalItems = 0;
+      listContainer.innerHTML = "";
+
+      cart.forEach(item => {
+        total += item.price * item.quantity;
+        totalItems += item.quantity;
+
+        listContainer.innerHTML += `
+          <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+            <div class="max-w-[70%]">
+              <p class="font-bold text-xs text-stone-900">${item.name}</p>
+              <p class="text-[11px] text-stone-500">${item.price.toFixed(2)} € / unité</p>
+            </div>
+            <div class="flex items-center gap-2 bg-stone-100 p-1.5 rounded-lg">
+              <button onclick="changeQuantity('${item.name}', -1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">-</button>
+              <span class="text-xs font-bold px-1 w-4 text-center">${item.quantity}</span>
+              <button onclick="changeQuantity('${item.name}', 1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">+</button>
+            </div>
+          </div>
+        `;
+      });
+
+      countBadge.textContent = totalItems;
+      totalDisplay.textContent = `${total.toFixed(2).replace('.', ',')} €`;
+    }
+
+    // ACTION : TRANSFÉRER LES DONNÉES DU PANIER VERS LE DEVIS
+    function checkoutCart() {
+      if (cart.length === 0) {
+        alert("Votre panier est vide.");
+        return;
+      }
+      const detailsArea = document.getElementById('request-details');
+      let textGeneration = "Bonjour, je souhaite inclure la sélection suivante à ma demande de devis personnalisée :\n";
+      
+      cart.forEach(item => {
+        textGeneration += `- ${item.name} (Quantité : ${item.quantity})\n`;
+      });
+
+      detailsArea.value = textGeneration;
+      toggleDrawer('cart-drawer');
+      document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // LOGIQUE MÉTIER MULTI-RÔLES EN DIRECT (AUTHENTIFICATION ET CONSOLE)
+    function simulateLogin(role, name) {
+      currentUser = { role, name };
+      toggleModal('login-modal');
+
+      const profileZone = document.getElementById('user-profile-zone');
+      profileZone.innerHTML = `
+        <div class="flex items-center gap-2 bg-stone-100 border border-stone-200 rounded-full pl-3 pr-1 py-1 shadow-xs">
+          <span class="text-xs font-semibold text-stone-700">Abonné : <strong class="text-stone-900">${name}</strong></span>
+          <button onclick="toggleDashboard()" class="bg-[#243029] text-white text-[10px] uppercase font-black px-3 py-1.5 rounded-full hover:bg-stone-800 transition">Console</button>
+        </div>
+      `;
+
+      if (role === 'client') {
+        document.getElementById('form-name').value = name;
+        document.getElementById('form-email').value = "marie.dupont@orange.fr";
+      }
+
+      renderDashboard();
+      
+      document.getElementById('business-dashboard').classList.remove('hidden');
+      document.getElementById('business-dashboard').scrollIntoView({ behavior: 'smooth' });
+      window.lucide.createIcons();
+    }
+
+    function simulateLogout() {
+      currentUser = null;
+      document.getElementById('business-dashboard').classList.add('hidden');
+      document.getElementById('user-profile-zone').innerHTML = `
+        <button onclick="toggleModal('login-modal')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">
+          <i data-lucide="user" class="w-4 h-4"></i> Connexion
+        </button>
+      `;
+      window.lucide.createIcons();
+    }
+
+    function toggleDashboard() {
+      document.getElementById('business-dashboard').classList.toggle('hidden');
+    }
+
+    // FONCTION ADMIN : METTRE À JOUR LE PRIX
+    function updatePrice(productName, newPrice) {
+      dynamicPrices[productName] = newPrice;
+      
+      // Met à jour l'affichage sur la carte
+      if(productName === "Le Cocktail Épicurien") {
+        document.getElementById('price-Cocktail').textContent = `${newPrice},00 €`;
+      } else if(productName === "Le Menu Tentation") {
+        document.getElementById('price-Tentation').textContent = `${newPrice},00 €`;
+      }
+      
+      // Recalcule le panier si l'article s'y trouve déjà
+      cart.forEach(item => {
+        if(item.name === productName) {
+          item.price = newPrice;
+        }
+      });
+      renderCart();
+      alert(`Le prix de l'offre "${productName}" a été passé à ${newPrice}€ avec succès !`);
+    }
+
+    // INTERFACE DE LA CONSOLE MÉTIER SELON LE RÔLE LOGUÉ
+    function renderDashboard() {
+      const badge = document.getElementById('dashboard-role-badge');
+      const nameSpan = document.getElementById('dashboard-user-name');
+      const container = document.getElementById('dashboard-content');
+
+      badge.textContent = currentUser.role;
+      nameSpan.textContent = currentUser.name;
+
+      if (currentUser.role === 'admin') {
+        badge.className = "bg-emerald-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest";
+        container.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <div class="bg-stone-800/80 p-4 rounded-xl border border-stone-700/60">
+              <p class="text-stone-400 text-xs font-bold uppercase tracking-wider">Indicateur Financier Semaine</p>
+              <p class="text-xl font-black text-emerald-400 mt-1">14 250,00 € <span class="text-xs font-normal text-stone-400">(Brut Encaissé)</span></p>
+            </div>
+            <div class="bg-stone-800/80 p-4 rounded-xl border border-stone-700/60">
+              <p class="text-stone-400 text-xs font-bold uppercase tracking-wider">Éditeur Métier Tarification Rapide</p>
+              <div class="mt-2 space-y-1.5">
+                <button onclick="updatePrice('Le Cocktail Épicurien', 49)" class="w-full text-left text-[11px] bg-stone-700 hover:bg-stone-600 p-1.5 rounded flex justify-between">
+                  <span>Passer Cocktail à 49€</span> <i data-lucide="edit-3" class="w-3 h-3"></i>
+                </button>
+                <button onclick="updatePrice('Le Menu Tentation', 75)" class="w-full text-left text-[11px] bg-stone-700 hover:bg-stone-600 p-1.5 rounded flex justify-between">
+                  <span>Passer Tentation à 75€</span> <i data-lucide="edit-3" class="w-3 h-3"></i>
+                </button>
+              </div>
+            </div>
+            <div class="bg-stone-800/80 p-4 rounded-xl border border-stone-700/60">
+              <p class="text-stone-400 text-xs font-bold uppercase tracking-wider">État des Plages Horaires</p>
+              <button onclick="alert('Le samedi 25 juillet est marqué complet pour les événements extérieurs')" class="mt-3 w-full text-xs bg-[#8f3d35] hover:bg-red-900 text-white font-bold py-2 px-3 rounded-lg">Fermer une date au calendrier</button>
+            </div>
+          </div>
+        `;
+      } else if (currentUser.role === 'employe') {
+        badge.className = "bg-blue-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest";
+        container.innerHTML = `
+          <div class="text-xs">
+            <p class="text-stone-400 font-bold uppercase tracking-wider mb-3">Fiches de Production Cuisine & Commandes du Jour</p>
+            <div class="space-y-2">
+              <div class="bg-stone-800/60 border border-stone-700/40 p-3 rounded-xl flex justify-between items-center">
+                <div>
+                  <p class="font-bold text-stone-200">📦 Ordre #4812 — Formule Cocktail Épicurien (45 Personnes)</p>
+                  <p class="text-[11px] text-stone-400">Livraison requise impérativement à 11h45 — Salon Horizon</p>
+                </div>
+                <button onclick="this.textContent='✓ Préparation Terminée'; this.className='bg-emerald-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg'" class="bg-stone-700 hover:bg-stone-600 text-stone-200 font-bold px-3 py-1.5 rounded-lg transition">Marquer Prêt</button>
+              </div>
+              <div class="bg-stone-800/60 border border-stone-700/40 p-3 rounded-xl flex justify-between items-center">
+                <div>
+                  <p class="font-bold text-stone-200">🥗 Ordre #4813 — 3x Coffrets Assortiment Apéritifs Signature</p>
+                  <p class="text-[11px] text-stone-400">Retrait en Boutique programmé à 18h30 par le client</p>
+                </div>
+                <button onclick="this.textContent='✓ Préparation Terminée'; this.className='bg-emerald-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg'" class="bg-stone-700 hover:bg-stone-600 text-stone-200 font-bold px-3 py-1.5 rounded-lg transition">Marquer Prêt</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentUser.role === 'client') {
+        badge.className = "bg-amber-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest";
+        container.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div class="bg-stone-800/80 p-4 rounded-xl border border-stone-700/60">
+              <p class="text-stone-400 text-xs font-bold uppercase tracking-wider">Votre Fidélité</p>
+              <p class="text-xl font-black text-amber-400 mt-1">120 Points <span class="text-xs font-normal text-stone-400">(-10% offerts au prochain palier)</span</p>
+            </div>
+            <div class="bg-stone-800/80 p-4 rounded-xl border border-stone-700/60">
+              <p class="text-stone-400 text-xs font-bold uppercase tracking-wider">Statut de votre demande</p>
+              <div class="mt-2 flex items-center justify-between bg-stone-700/40 p-2 rounded-lg">
+                <span class="text-xs text-stone-200">Devis #VD-2026-09</span>
+                <span class="bg-amber-500/20 text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/30">En cours d'étude</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      window.lucide.createIcons();
+    }
+
+    // GESTION DU FORMULAIRE DE CONTACT
+    document.getElementById('request-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const msgDiv = document.getElementById('form-message');
+      msgDiv.className = "text-center text-sm font-semibold p-4 rounded-xl bg-emerald-900/40 text-emerald-300 border border-emerald-800";
+      msgDiv.textContent = "Merci ! Votre demande de projet a été transmise à notre équipe. Un conseiller va revenir vers vous.";
+      msgDiv.classList.remove('hidden');
+      this.reset();
+      cart = [];
+      renderCart();
+    });
+  </script>
+</body>
+</html>

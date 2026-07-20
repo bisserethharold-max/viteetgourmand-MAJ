@@ -1,0 +1,9 @@
+###
+
+POST http://localhost:3000/api/auth/connexion
+Content-Type: application/json
+
+{
+  "login": "batman",
+  "password": "GothamSeraSauvee2026"
+}

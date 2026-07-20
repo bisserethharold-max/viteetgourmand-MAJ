@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vite et Gourmand - Traiteur</title>
+  <!-- Tailwind CSS pour un design ultra-pro moderne -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Importation de la police Playfair Display depuis Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+  <!-- Icônes Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    html, body, button, input, textarea, select {
+      font-family: 'Playfair Display', Georgia, serif !important;
+    }
+    .canva-button {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="bg-stone-50/50 text-stone-800 antialiased pt-20">
+
+  <!-- ========================================================================= -->
+  <!-- 1. BARRE DE NAVIGATION FIXE (STICKY NAV) -->
+  <!-- ========================================================================= -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <a href="#" class="font-serif text-2xl font-bold tracking-tight text-[#243029]">Vite et Gourmand</a>
+
+      <!-- Menu PC -->
+      <div class="hidden md:flex items-center gap-8 font-medium text-stone-600">
+        <a href="#a-propos" class="hover:text-[#8f3d35] transition">À Propos</a>
+        <a href="#carte" class="hover:text-[#8f3d35] transition">La Carte</a>
+        <a href="#galerie" class="hover:text-[#8f3d35] transition">Galerie</a>
+        <a href="#contact" class="hover:text-[#8f3d35] transition">Contact & Devis</a>
+      </div>
+
+      <!-- Actions de droite -->
+      <div class="flex items-center gap-4">
+        <div id="user-profile-zone">
+          <button onclick="toggleModal('login-modal')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">
+            <i data-lucide="user" class="w-4 h-4"></i> Connexion
+          </button>
+        </div>
+
+        <button onclick="toggleDrawer('cart-drawer')" class="relative p-2.5 text-stone-700 hover:text-[#8f3d35] transition bg-stone-100 rounded-full">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span id="global-cart-count" class="absolute -top-1 -right-1 bg-[#8f3d35] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+        </button>
+
+        <button id="burger-btn" class="md:hidden p-2 text-stone-700 hover:bg-stone-100 rounded-lg transition">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menu Mobile -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-stone-100 px-4 py-4 space-y-2 shadow-lg">
+      <a href="#a-propos" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">À Propos</a>
+      <a href="#carte" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">La Carte</a>
+      <a href="#galerie" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Galerie</a>
+      <a href="#contact" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Contact & Devis</a>
+    </div>
+  </nav>
+
+  <!-- ========================================================================= -->
+  <!-- 2. ESPACE CLIENT CONNECTÉ (réel, basé sur le token JWT) -->
+  <!-- ========================================================================= -->
+  <div id="business-dashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="bg-stone-900 text-white p-6 rounded-2xl shadow-xl border border-stone-800">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-stone-800 pb-4 mb-4 gap-4">
+        <div>
+          <span class="bg-amber-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">Client</span>
+          <h2 class="text-xl font-bold mt-1.5">Espace : <span id="dashboard-user-name" class="font-normal text-stone-400"></span></h2>
+        </div>
+        <button onclick="logout()" class="text-xs bg-stone-800 hover:bg-stone-700 text-stone-300 px-4 py-2 rounded-xl transition flex items-center gap-2 border border-stone-700">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Déconnexion
+        </button>
+      </div>
+      <div id="dashboard-content">
+        <p class="text-sm text-stone-400">Bienvenue ! Consultez la carte et passez commande ci-dessous.</p>
+        <div id="mes-commandes-list" class="mt-4 space-y-2 text-sm"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. SECTIONS DE CONTENU DU DEFILEMENT -->
+  <!-- ========================================================================= -->
+
+  <!-- SECTION HERO -->
+  <header class="relative bg-cover bg-center bg-no-repeat text-white overflow-hidden py-32 px-4 sm:px-6 lg:px-8" style="background-image: url('https://images.unsplash.com/photo-1577308856961-8e9ec50d0c67?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+    <div class="absolute inset-0 bg-black/50 z-0"></div>
+    <div class="max-w-5xl mx-auto text-center relative z-10">
+      <span class="text-amber-400 font-semibold tracking-widest text-xs uppercase bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-xs">Artisan & Traiteur</span>
+
+    </div>
+  </header>
+
+  <!-- SECTION À PROPOS -->
+  <section id="a-propos" class="py-20 bg-[#fff4dd]">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bloc-texte">
+        <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Notre Histoire</span>
+        <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-2 mb-6">Une passion culinaire, des engagements locaux</h2>
+        <p class="text-stone-600 mb-4 leading-relaxed">Depuis 2001, nous transformons vos événements en souvenirs gourmands tout au long de l'année pour vos baptêmes, mariages, réceptions d'entreprise, fêtes privées. Nous sommes Julie et José, traiteur de l'entreprise « Vite et Gourmand », pour vous servir à Bordeaux.</p>
+        <p class="text-stone-600 mb-6 leading-relaxed">Nos menus s'adaptent aux saisons et sont soigneusement élaborés en utilisant des produits frais et locaux de notre région avec une touche ensoleillée des îles.</p>
+      </div>
+      <div class="relative">
+        <img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=800&auto=format&fit=crop" alt="Cuisine de Chef" class="rounded-2xl shadow-xl w-full object-cover h-96">
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION LA CARTE (DYNAMIQUE - depuis l'API) -->
+  <section id="carte" class="py-20 bg-stone-100/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+      <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Prestations & Menus</span>
+      <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-2">Commandez ou réservez vos formules</h2>
+      <p class="text-stone-500 mt-2">Ajoutez des produits au panier pour passer commande.</p>
+    </div>
+
+    <div id="produits-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <p class="col-span-3 text-center text-stone-400 text-sm">Chargement de la carte...</p>
+    </div>
+  </section>
+
+  <!-- SECTION GALERIE PHOTOS -->
+  <section id="galerie" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Immersion Visuelle</span>
+      <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-2">Le soin du détail en images</h2>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Buffet">
+      <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Assiette">
+      <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Punch au coco">
+      <img src="https://images.unsplash.com/photo-1516685018646-549198525c1b?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Dessert">
+    </div>
+  </section>
+
+  <!-- SECTION FORMULAIRE CONTACT / DEVIS -->
+  <section id="contact" class="py-20 bg-stone-300 text-white relative">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <span class="text-amber-400 font-bold text-xs uppercase tracking-wider">Votre Projet</span>
+        <h2 class="text-3xl font-serif font-bold text-white mt-1">Concevons votre menu idéal</h2>
+        <p class="text-stone-400 text-sm mt-2">Nos conseillers et chefs vous établissent un chiffrage personnalisé sous 24 heures.</p>
+      </div>
+
+      <form id="request-form" class="space-y-6 bg-white/5 p-8 rounded-2xl border border-white/10 backdrop-blur-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-300 mb-2">Nom ou Entreprise *</label>
+            <input type="text" id="form-name" required class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 text-sm" placeholder="Ex: Marie Dupont">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-stone-300 mb-2">Adresse E-mail *</label>
+            <input type="email" id="form-email" required class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 text-sm" placeholder="Ex: marie@exemple.com">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-300 mb-2">Détails de l'événement</label>
+          <textarea id="request-details" rows="4" class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 text-sm" placeholder="Indiquez ici le nombre d'invités, le lieu, la date voulue ou vos contraintes spécifiques..."></textarea>
+        </div>
+
+        <button type="submit" id="submit-request" class="w-full bg-amber-500 hover:bg-amber-600 text-stone-900 py-3.5 rounded-xl font-bold canva-button flex items-center justify-center gap-2">
+          <span class="submit-idle">Envoyer ma Demande de Projet</span>
+        </button>
+        <div id="form-message" class="hidden text-center text-sm font-semibold p-4 rounded-xl"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-stone-950 text-stone-500 py-8 border-t border-stone-900 text-center text-xs">
+    <p>&copy; 2026 Vite et Gourmand - Traiteur. Tous droits réservés.</p>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- 4. COMPOSANT CACHÉ : PANIER LATÉRAL (DRAWER) -->
+  <!-- ========================================================================= -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none overflow-hidden hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-stone-900/60 opacity-100 transition-opacity pointer-events-auto" onclick="toggleDrawer('cart-drawer')"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pointer-events-auto">
+      <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-stone-100 flex items-center justify-between bg-stone-50">
+          <h2 class="text-base font-bold text-stone-900 flex items-center gap-2"><i data-lucide="shopping-bag" class="text-[#8f3d35] w-5 h-5"></i> Votre Panier</h2>
+          <button onclick="toggleDrawer('cart-drawer')" class="p-2 text-stone-400 hover:text-stone-600 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-4" id="cart-items-list">
+          <p class="text-stone-400 text-center py-8 text-sm">Sélectionnez des formules sur la carte pour les ajouter.</p>
+        </div>
+        <div class="p-6 border-t border-stone-100 bg-stone-50/80">
+          <div class="flex justify-between text-sm font-bold text-stone-900 mb-4">
+            <p>Montant total</p>
+            <p id="cart-total-price" class="text-lg font-black text-[#8f3d35]">0,00 €</p>
+          </div>
+          <div id="checkout-message" class="hidden text-xs font-semibold p-3 rounded-lg mb-3"></div>
+          <button onclick="checkoutCart()" class="w-full bg-[#243029] hover:bg-[#34453b] text-white py-3.5 rounded-xl font-bold canva-button text-sm tracking-wide">Passer la commande</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 5. COMPOSANT CACHÉ : CONNEXION / INSCRIPTION (MODAL RÉEL) -->
+  <!-- ========================================================================= -->
+  <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4">
+    <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-xs" onclick="toggleModal('login-modal')"></div>
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl z-10 relative border border-stone-100">
+      <button onclick="toggleModal('login-modal')" class="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+
+      <!-- Onglets Connexion / Inscription -->
+      <div class="flex gap-2 mb-5 bg-stone-100 p-1 rounded-xl">
+        <button id="tab-connexion" onclick="switchAuthTab('connexion')" class="flex-1 text-xs font-bold py-2 rounded-lg transition bg-white shadow-sm">Connexion</button>
+        <button id="tab-inscription" onclick="switchAuthTab('inscription')" class="flex-1 text-xs font-bold py-2 rounded-lg transition text-stone-500">Inscription</button>
+      </div>
+
+      <!-- Formulaire Connexion -->
+      <form id="form-connexion" class="space-y-3">
+        <input type="email" id="connexion-email" required placeholder="Adresse e-mail" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <input type="password" id="connexion-password" required placeholder="Mot de passe" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <button type="submit" class="w-full bg-[#243029] hover:bg-[#8f3d35] text-white py-2.5 rounded-xl text-sm font-bold canva-button">Se connecter</button>
+      </form>
+
+      <!-- Formulaire Inscription -->
+      <form id="form-inscription" class="space-y-3 hidden">
+        <input type="text" id="inscription-nom" required placeholder="Nom complet" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <input type="email" id="inscription-email" required placeholder="Adresse e-mail" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <input type="password" id="inscription-password" required placeholder="Mot de passe" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <button type="submit" class="w-full bg-[#243029] hover:bg-[#8f3d35] text-white py-2.5 rounded-xl text-sm font-bold canva-button">Créer mon compte</button>
+      </form>
+
+      <div id="auth-message" class="hidden text-xs font-semibold p-3 rounded-lg mt-3"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 6. LOGIQUE MÉTIER & SYSTÈME JAVASCRIPT (CONNECTÉ À L'API RÉELLE) -->
+  <!-- ========================================================================= -->
+  <script>
+    // ⚙️ Adresse de ton backend Node.js/Express (à adapter en production)
+    const API_URL = 'http://localhost:3001/api';
+
+    // Initialisation des icônes au chargement initial
+    window.addEventListener('DOMContentLoaded', () => {
+      window.lucide.createIcons();
+      chargerProduits();
+      verifierSessionExistante();
+    });
+
+    // Variables d'état (Global Application State)
+    let cart = [];
+
+    // Gestion de l'affichage des fenêtres
+    function toggleDrawer(id) { document.getElementById(id).classList.toggle('hidden'); }
+    function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
+
+    // Activation du menu burger sur mobile
+    document.getElementById('burger-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+      link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
+    });
+
+    // =========================================================
+    // PRODUITS : récupération réelle depuis l'API
+    // =========================================================
+    async function chargerProduits() {
+      const container = document.getElementById('produits-container');
+      try {
+        const res = await fetch(`${API_URL}/produits`);
+        const data = await res.json();
+        const produits = data.produits || [];
+
+        if (produits.length === 0) {
+          container.innerHTML = `<p class="col-span-3 text-center text-stone-400 text-sm">Aucun produit disponible pour le moment.</p>`;
+          return;
+        }
+
+        container.innerHTML = produits.map(p => `
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-stone-200/60 flex flex-col justify-between">
+            <div>
+              <img src="${p.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop'}" alt="${p.nom}" class="rounded-xl w-full h-48 object-cover mb-4">
+              <span class="bg-red-50 text-[#8f3d35] font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">${p.categorie}</span>
+              <h3 class="text-lg font-bold mt-2 text-stone-900">${p.nom}</h3>
+              <p class="text-sm text-stone-500 mt-1">${p.description || ''}</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
+              <span class="text-lg font-black text-stone-900">${Number(p.prix).toFixed(2).replace('.', ',')} €</span>
+              <button onclick='addToCart(${p.idproduit}, ${JSON.stringify(p.nom)}, ${p.prix})' class="bg-[#243029] hover:bg-[#8f3d35] text-white px-4 py-2 rounded-xl text-xs font-bold canva-button flex items-center gap-1.5">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Ajouter
+              </button>
+            </div>
+          </div>
+        `).join('');
+        window.lucide.createIcons();
+      } catch (error) {
+        console.error('Erreur chargement produits :', error);
+        container.innerHTML = `<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger la carte. Le serveur backend est-il démarré ?</p>`;
+      }
+    }
+
+    // =========================================================
+    // PANIER
+    // =========================================================
+    function addToCart(idproduit, nom, prix) {
+      const existant = cart.find(item => item.idproduit === idproduit);
+      if (existant) {
+        existant.quantite += 1;
+      } else {
+        cart.push({ idproduit, nom, prix_unitaire: Number(prix), quantite: 1 });
+      }
+      renderCart();
+      document.getElementById('cart-drawer').classList.remove('hidden');
+    }
+
+    function changeQuantity(idproduit, change) {
+      const item = cart.find(i => i.idproduit === idproduit);
+      if (item) {
+        item.quantite += change;
+        if (item.quantite <= 0) {
+          cart = cart.filter(i => i.idproduit !== idproduit);
+        }
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      const listContainer = document.getElementById('cart-items-list');
+      const countBadge = document.getElementById('global-cart-count');
+      const totalDisplay = document.getElementById('cart-total-price');
+
+      if (cart.length === 0) {
+        listContainer.innerHTML = `<p class="text-stone-400 text-center py-8 text-sm">Sélectionnez des formules sur la carte pour les ajouter.</p>`;
+        countBadge.textContent = "0";
+        totalDisplay.textContent = "0,00 €";
+        return;
+      }
+
+      let total = 0, totalItems = 0;
+      listContainer.innerHTML = "";
+
+      cart.forEach(item => {
+        total += item.prix_unitaire * item.quantite;
+        totalItems += item.quantite;
+        listContainer.innerHTML += `
+          <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+            <div class="max-w-[70%]">
+              <p class="font-bold text-xs text-stone-900">${item.nom}</p>
+              <p class="text-[11px] text-stone-500">${item.prix_unitaire.toFixed(2)} € / unité</p>
+            </div>
+            <div class="flex items-center gap-2 bg-stone-100 p-1.5 rounded-lg">
+              <button onclick="changeQuantity(${item.idproduit}, -1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">-</button>
+              <span class="text-xs font-bold px-1 w-4 text-center">${item.quantite}</span>
+              <button onclick="changeQuantity(${item.idproduit}, 1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">+</button>
+            </div>
+          </div>
+        `;
+      });
+
+      countBadge.textContent = totalItems;
+      totalDisplay.textContent = `${total.toFixed(2).replace('.', ',')} €`;
+    }
+
+    // =========================================================
+    // COMMANDE : envoi réel vers POST /api/commandes
+    // =========================================================
+    async function checkoutCart() {
+      const msgDiv = document.getElementById('checkout-message');
+      const token = localStorage.getItem('token');
+
+      if (cart.length === 0) {
+        alert("Votre panier est vide.");
+        return;
+      }
+
+      if (!token) {
+        msgDiv.className = "text-xs font-semibold p-3 rounded-lg mb-3 bg-amber-50 text-amber-700 border border-amber-200";
+        msgDiv.textContent = "Connectez-vous pour valider votre commande.";
+        msgDiv.classList.remove('hidden');
+        toggleDrawer('cart-drawer');
+        toggleModal('login-modal');
+        return;
+      }
+
+      const total = cart.reduce((sum, item) => sum + item.prix_unitaire * item.quantite, 0);
+      const produits = cart.map(item => ({
+        idproduit: item.idproduit,
+        quantite: item.quantite,
+        prix_unitaire: item.prix_unitaire
+      }));
+
+      try {
+        const res = await fetch(`${API_URL}/commandes`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ total, produits })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Erreur lors de la commande.");
+
+        msgDiv.className = "text-xs font-semibold p-3 rounded-lg mb-3 bg-emerald-50 text-emerald-700 border border-emerald-200";
+        msgDiv.textContent = `Commande #${data.idcommande} enregistrée avec succès !`;
+        msgDiv.classList.remove('hidden');
+        cart = [];
+        renderCart();
+      } catch (error) {
+        msgDiv.className = "text-xs font-semibold p-3 rounded-lg mb-3 bg-red-50 text-red-700 border border-red-200";
+        msgDiv.textContent = error.message;
+        msgDiv.classList.remove('hidden');
+      }
+    }
+
+    // =========================================================
+    // AUTHENTIFICATION RÉELLE (inscription / connexion / session)
+    // =========================================================
+    function switchAuthTab(tab) {
+      const tabConnexion = document.getElementById('tab-connexion');
+      const tabInscription = document.getElementById('tab-inscription');
+      const formConnexion = document.getElementById('form-connexion');
+      const formInscription = document.getElementById('form-inscription');
+
+      if (tab === 'connexion') {
+        tabConnexion.className = "flex-1 text-xs font-bold py-2 rounded-lg transition bg-white shadow-sm";
+        tabInscription.className = "flex-1 text-xs font-bold py-2 rounded-lg transition text-stone-500";
+        formConnexion.classList.remove('hidden');
+        formInscription.classList.add('hidden');
+      } else {
+        tabInscription.className = "flex-1 text-xs font-bold py-2 rounded-lg transition bg-white shadow-sm";
+        tabConnexion.className = "flex-1 text-xs font-bold py-2 rounded-lg transition text-stone-500";
+        formInscription.classList.remove('hidden');
+        formConnexion.classList.add('hidden');
+      }
+      document.getElementById('auth-message').classList.add('hidden');
+    }
+
+    document.getElementById('form-connexion').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('connexion-email').value;
+      const password = document.getElementById('connexion-password').value;
+      const msgDiv = document.getElementById('auth-message');
+
+      try {
+        const res = await fetch(`${API_URL}/auth/connexion`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur de connexion.");
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('client', JSON.stringify(data.client));
+        toggleModal('login-modal');
+        afficherSessionActive(data.client);
+        this.reset();
+      } catch (error) {
+        msgDiv.className = "text-xs font-semibold p-3 rounded-lg mt-3 bg-red-50 text-red-700 border border-red-200";
+        msgDiv.textContent = error.message;
+        msgDiv.classList.remove('hidden');
+      }
+    });
+
+    document.getElementById('form-inscription').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const nom = document.getElementById('inscription-nom').value;
+      const email = document.getElementById('inscription-email').value;
+      const password = document.getElementById('inscription-password').value;
+      const msgDiv = document.getElementById('auth-message');
+
+      try {
+        const res = await fetch(`${API_URL}/auth/inscription`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nom, email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur lors de l'inscription.");
+
+        msgDiv.className = "text-xs font-semibold p-3 rounded-lg mt-3 bg-emerald-50 text-emerald-700 border border-emerald-200";
+        msgDiv.textContent = "Compte créé ! Vous pouvez maintenant vous connecter.";
+        msgDiv.classList.remove('hidden');
+        this.reset();
+        switchAuthTab('connexion');
+      } catch (error) {
+        msgDiv.className = "text-xs font-semibold p-3 rounded-lg mt-3 bg-red-50 text-red-700 border border-red-200";
+        msgDiv.textContent = error.message;
+        msgDiv.classList.remove('hidden');
+      }
+    });
+
+    function afficherSessionActive(client) {
+      const profileZone = document.getElementById('user-profile-zone');
+      profileZone.innerHTML = `
+        <div class="flex items-center gap-2 bg-stone-100 border border-stone-200 rounded-full pl-3 pr-1 py-1 shadow-xs">
+          <span class="text-xs font-semibold text-stone-700">Bonjour, <strong class="text-stone-900">${client.nom}</strong></span>
+          <button onclick="toggleDashboard()" class="bg-[#243029] text-white text-[10px] uppercase font-black px-3 py-1.5 rounded-full hover:bg-stone-800 transition">Mon espace</button>
+        </div>
+      `;
+      document.getElementById('dashboard-user-name').textContent = client.nom;
+      document.getElementById('form-name').value = client.nom;
+      document.getElementById('form-email').value = client.email;
+      window.lucide.createIcons();
+    }
+
+    function toggleDashboard() {
+      document.getElementById('business-dashboard').classList.toggle('hidden');
+      document.getElementById('business-dashboard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('client');
+      document.getElementById('business-dashboard').classList.add('hidden');
+      document.getElementById('user-profile-zone').innerHTML = `
+        <button onclick="toggleModal('login-modal')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">
+          <i data-lucide="user" class="w-4 h-4"></i> Connexion
+        </button>
+      `;
+      window.lucide.createIcons();
+    }
+
+    // Restaure la session si un token valide est déjà stocké (rafraîchissement de page)
+    function verifierSessionExistante() {
+      const token = localStorage.getItem('token');
+      const client = localStorage.getItem('client');
+      if (token && client) {
+        afficherSessionActive(JSON.parse(client));
+      }
+    }
+
+    // GESTION DU FORMULAIRE DE CONTACT (reste une simple simulation, pas d'endpoint dédié pour l'instant)
+    document.getElementById('request-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const msgDiv = document.getElementById('form-message');
+      msgDiv.className = "text-center text-sm font-semibold p-4 rounded-xl bg-emerald-900/40 text-emerald-300 border border-emerald-800";
+      msgDiv.textContent = "Merci ! Votre demande de projet a été transmise à notre équipe.";
+      msgDiv.classList.remove('hidden');
+      this.reset();
+    });
+  </script>
+
+</body>
+</html>
