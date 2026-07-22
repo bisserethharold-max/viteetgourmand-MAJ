@@ -4,7 +4,6 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js'; 
 import dotenv from 'dotenv';
 import Database from './config/Database.js';
-import produitRoutes from './routes/produitRoutes.js';
 import commandeRoutes from './routes/commandeRoutes.js';
 import menuRoutes from './routes/menuRoutes.js';
 import catalogueRoutes from './routes/catalogueRoutes.js';
@@ -216,7 +215,6 @@ Database.connect()
 // 5. Branchement ordonné de toutes les routes de l'API
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes); 
-app.use('/api/produits', produitRoutes);
 app.use('/api/commandes', commandeRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/api/catalogue', catalogueRoutes);
