@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de bord Administrateur - Vite et Gourmand</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <style>
+    body, button, input { font-family: 'Playfair Display', Georgia, serif !important; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+  <nav class="bg-stone-900 text-white py-5 px-6 flex justify-between items-center">
+    <a href="index.html" class="font-serif text-xl font-bold">Vite et Gourmand — Tableau de bord</a>
+    <a href="index.html" class="text-sm text-stone-300 hover:text-white">&larr; Retour au site</a>
+  </nav>
+
+  <div id="acces-refuse" class="hidden max-w-2xl mx-auto mt-16 bg-red-50 border border-red-200 text-red-700 p-6 rounded-2xl text-center" role="alert">
+    <p class="font-bold mb-2">Accès réservé</p>
+    <p class="text-sm">Cette page est réservée aux comptes Administrateur.</p>
+  </div>
+
+  <main id="admin-content" class="hidden max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- CHIFFRES CLÉS -->
+    <section aria-labelledby="titre-chiffres">
+      <h2 id="titre-chiffres" class="text-lg font-bold mb-4">Chiffre d'affaires & ventes</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <div class="bg-white border border-stone-200 rounded-2xl p-5">
+          <p class="text-xs uppercase font-bold text-stone-500">Chiffre d'affaires total</p>
+          <p id="stat-ca" class="text-3xl font-black text-[#8f3d35] mt-1">—</p>
+        </div>
+        <div class="bg-white border border-stone-200 rounded-2xl p-5">
+          <p class="text-xs uppercase font-bold text-stone-500">Nombre de commandes</p>
+          <p id="stat-nb-commandes" class="text-3xl font-black text-stone-900 mt-1">—</p>
+        </div>
+        <div class="bg-white border border-stone-200 rounded-2xl p-5">
+          <p class="text-xs uppercase font-bold text-stone-500">Panier moyen</p>
+          <p id="stat-panier-moyen" class="text-3xl font-black text-stone-900 mt-1">—</p>
+        </div>
+      </div>
+
+      <h3 class="text-sm font-bold uppercase text-stone-500 mb-2">Répartition par statut</h3>
+      <div id="stat-par-statut" class="flex flex-wrap gap-3 mb-10"></div>
+    </section>
+
+    <!-- STOCK -->
+    <section aria-labelledby="titre-stock" class="mb-10">
+      <h2 id="titre-stock" class="text-lg font-bold mb-4">Suivi du stock</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-sm font-bold uppercase text-stone-500 mb-1">Menus</h3>
+          <p class="text-xs text-stone-400 mb-2">Formules créées via "Gérer les menus" (avec galerie, thème, régime...)</p>
+          <div id="stock-menus" class="space-y-2"></div>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold uppercase text-stone-500 mb-1">Produits (Carte)</h3>
+          <p class="text-xs text-stone-400 mb-2">Articles simples affichés sur "La Carte" de la page d'accueil</p>
+          <div id="stock-produits" class="space-y-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GESTION DES EMPLOYÉS -->
+    <section aria-labelledby="titre-employes">
+      <h2 id="titre-employes" class="text-lg font-bold mb-4">Gestion des comptes employés</h2>
+
+      <form id="form-employe" class="bg-white border border-stone-200 rounded-2xl p-5 grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+        <div>
+          <label for="emp-nom" class="block text-xs font-bold uppercase text-stone-500 mb-1">Nom</label>
+          <input id="emp-nom" type="text" required class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label for="emp-prenom" class="block text-xs font-bold uppercase text-stone-500 mb-1">Prénom</label>
+          <input id="emp-prenom" type="text" required class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label for="emp-telephone" class="block text-xs font-bold uppercase text-stone-500 mb-1">Téléphone</label>
+          <input id="emp-telephone" type="tel" required class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label for="emp-adresse" class="block text-xs font-bold uppercase text-stone-500 mb-1">Adresse</label>
+          <input id="emp-adresse" type="text" required class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label for="emp-email" class="block text-xs font-bold uppercase text-stone-500 mb-1">Email</label>
+          <input id="emp-email" type="email" required class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label for="emp-password" class="block text-xs font-bold uppercase text-stone-500 mb-1">Mot de passe temporaire</label>
+          <input id="emp-password" type="password" required class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+        <div class="md:col-span-2">
+          <button type="submit" class="bg-[#243029] hover:bg-[#8f3d35] text-white px-6 py-2.5 rounded-xl text-sm font-bold transition">Créer le compte employé</button>
+        </div>
+        <div id="form-employe-message" class="hidden md:col-span-2 text-sm font-semibold p-3 rounded-lg" role="status" aria-live="polite"></div>
+      </form>
+
+      <div id="liste-employes" class="space-y-2"></div>
+    </section>
+  </main>
+
+  <script>
+    const API_URL = 'http://localhost:3001/api';
+
+    window.addEventListener('DOMContentLoaded', verifierAcces);
+
+    function verifierAcces() {
+      const clientRaw = localStorage.getItem('client');
+      const client = clientRaw ? JSON.parse(clientRaw) : null;
+      if (!client || client.role !== 'admin') {
+        document.getElementById('acces-refuse').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('admin-content').classList.remove('hidden');
+      chargerStatistiques();
+      chargerEmployes();
+    }
+
+    function getToken() { return localStorage.getItem('token'); }
+
+    async function chargerStatistiques() {
+      try {
+        const res = await fetch(`${API_URL}/statistiques`, {
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        document.getElementById('stat-ca').textContent = data.chiffre_affaires.toFixed(2).replace('.', ',') + ' €';
+        document.getElementById('stat-nb-commandes').textContent = data.nombre_commandes;
+        const panierMoyen = data.nombre_commandes > 0 ? data.chiffre_affaires / data.nombre_commandes : 0;
+        document.getElementById('stat-panier-moyen').textContent = panierMoyen.toFixed(2).replace('.', ',') + ' €';
+
+        document.getElementById('stat-par-statut').innerHTML = data.par_statut.map(s => `
+          <div class="bg-white border border-stone-200 rounded-xl px-4 py-2 text-sm">
+            <span class="font-bold">${s.statut}</span> : ${s.nombre} commande(s) — ${Number(s.montant).toFixed(2)} €
+          </div>
+        `).join('') || '<p class="text-stone-400 text-sm">Aucune commande.</p>';
+
+        document.getElementById('stock-menus').innerHTML = data.stock_menus.map(m => `
+          <div class="flex justify-between items-center border rounded-lg px-3 py-2 text-sm ${m.stock_disponible <= 0 ? 'bg-stone-100 border-stone-200 opacity-60' : 'bg-white border-stone-200'}">
+            <span class="${m.stock_disponible <= 0 ? 'text-stone-400 line-through' : 'text-stone-800'}">${m.titre}</span>
+            <span class="${m.stock_disponible <= 0 ? 'text-stone-400 font-bold' : (m.stock_disponible <= 2 ? 'text-red-600 font-bold' : 'text-stone-600')}">
+              ${m.stock_disponible <= 0 ? 'Épuisé' : m.stock_disponible + ' en stock'}
+            </span>
+          </div>
+        `).join('') || '<p class="text-stone-400 text-sm">Aucun menu.</p>';
+
+        document.getElementById('stock-produits').innerHTML = data.stock_produits.map(p => `
+          <div class="flex justify-between items-center border rounded-lg px-3 py-2 text-sm ${!p.disponible ? 'bg-stone-100 border-stone-200 opacity-60' : 'bg-white border-stone-200'}">
+            <span class="${!p.disponible ? 'text-stone-400 line-through' : 'text-stone-800'}">${p.nom}</span>
+            <span class="${p.disponible ? 'text-emerald-600' : 'text-stone-400'} font-bold">${p.disponible ? 'Disponible' : 'Indisponible'}</span>
+          </div>
+        `).join('') || '<p class="text-stone-400 text-sm">Aucun produit.</p>';
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function chargerEmployes() {
+      const container = document.getElementById('liste-employes');
+      try {
+        const res = await fetch(`${API_URL}/employes`, {
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        const employes = data.employes || [];
+
+        container.innerHTML = employes.map(e => `
+          <div class="flex justify-between items-center bg-white border border-stone-200 rounded-xl p-3">
+            <div>
+              <p class="text-sm font-bold">${e.prenom} ${e.nom} <span class="text-xs font-normal text-stone-500">(${e.role})</span></p>
+              <p class="text-xs text-stone-500">${e.email}</p>
+            </div>
+            ${e.role === 'employe' ? `<button onclick="supprimerEmploye(${e.idclient})" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-semibold">Supprimer</button>` : '<span class="text-xs text-stone-400">Compte admin</span>'}
+          </div>
+        `).join('') || '<p class="text-stone-400 text-sm">Aucun employé pour le moment.</p>';
+      } catch (error) {
+        container.innerHTML = `<p class="text-red-500 text-sm">Impossible de charger les employés.</p>`;
+      }
+    }
+
+    document.getElementById('form-employe').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const msgDiv = document.getElementById('form-employe-message');
+      const payload = {
+        nom: document.getElementById('emp-nom').value,
+        prenom: document.getElementById('emp-prenom').value,
+        telephone: document.getElementById('emp-telephone').value,
+        adresse: document.getElementById('emp-adresse').value,
+        email: document.getElementById('emp-email').value,
+        password: document.getElementById('emp-password').value
+      };
+      try {
+        const res = await fetch(`${API_URL}/employes`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        msgDiv.className = "md:col-span-2 text-sm font-semibold p-3 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200";
+        msgDiv.textContent = data.message;
+        msgDiv.classList.remove('hidden');
+        this.reset();
+        chargerEmployes();
+      } catch (error) {
+        msgDiv.className = "md:col-span-2 text-sm font-semibold p-3 rounded-lg bg-red-50 text-red-700 border border-red-200";
+        msgDiv.textContent = error.message;
+        msgDiv.classList.remove('hidden');
+      }
+    });
+
+    async function supprimerEmploye(id) {
+      if (!confirm("Supprimer définitivement ce compte employé ?")) return;
+      try {
+        const res = await fetch(`${API_URL}/employes/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        chargerEmployes();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+  </script>
+</body>
+</html>

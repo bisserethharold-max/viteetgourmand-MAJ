@@ -1,36 +1,53 @@
 import Database from '../config/Database.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { envoyerEmailBienvenue } from '../services/emailService.js';
 
-// La clé vient maintenant du .env (voir instructions ci-dessous)
 const JWT_SECRET = process.env.JWT_SECRET;
+
+// Mot de passe : 10 caractères minimum, au moins 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
+const REGEX_MOT_DE_PASSE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{10,}$/;
 
 const authController = {
   inscription: async (req, res) => {
-    const { nom, email, password } = req.body;
+    const { nom, prenom, telephone, adresse, email, password } = req.body;
 
-    if (!nom || !email || !password) {
-      return res.status(400).json({ error: "Tous les champs (nom, email, mot de passe) sont obligatoires." });
+    // 1. Vérification que tous les champs obligatoires sont présents
+    if (!nom || !prenom || !telephone || !adresse || !email || !password) {
+      return res.status(400).json({
+        error: "Tous les champs sont obligatoires (nom, prénom, numéro de GSM, adresse, email, mot de passe)."
+      });
+    }
+
+    // 2. Vérification de la robustesse du mot de passe
+    if (!REGEX_MOT_DE_PASSE.test(password)) {
+      return res.status(400).json({
+        error: "Le mot de passe doit contenir au moins 10 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial."
+      });
     }
 
     try {
-      // 1. Vérifier que l'email n'est pas déjà utilisé
+      // 3. Vérifier que l'email n'est pas déjà utilisé
       const existant = await Database.query("SELECT idclient FROM client WHERE email = ?;", [email]);
       if (existant && existant.length > 0) {
         return res.status(400).json({ error: "Cet email est déjà associé à un compte." });
       }
 
-      // 2. Hachage du mot de passe (jamais stocké en clair)
+      // 4. Hachage du mot de passe
       const passwordHache = await bcrypt.hash(password, 10);
 
-      // 3. Insertion explicite (correspond exactement à la table créée dans app.js)
+      // 5. Création du compte avec le rôle par défaut 'utilisateur'
       const resultInsert = await Database.query(
-        "INSERT INTO client (nom, email, password, role) VALUES (?, ?, ?, 'client');",
-        [nom, email, passwordHache]
+        `INSERT INTO client (nom, prenom, telephone, adresse, email, password, role)
+         VALUES (?, ?, ?, ?, ?, ?, 'utilisateur');`,
+        [nom, prenom, telephone, adresse, email, passwordHache]
       );
 
+      // 6. Envoi automatique de l'email de bienvenue (non-bloquant si ça échoue)
+      envoyerEmailBienvenue(email, prenom, nom);
+
       res.status(201).json({
-        message: "Compte client créé avec succès !",
+        message: "Compte créé avec succès ! Un email de bienvenue vous a été envoyé.",
         idclient: resultInsert.insertId
       });
     } catch (error) {
@@ -55,7 +72,6 @@ const authController = {
 
       const client = rows[0];
 
-      // Comparaison sécurisée avec le hash bcrypt (jamais en clair)
       const motDePasseValide = await bcrypt.compare(password, client.password);
       if (!motDePasseValide) {
         return res.status(401).json({ error: "Identifiants incorrects." });
@@ -65,7 +81,7 @@ const authController = {
         {
           idclient: client.idclient,
           email: client.email,
-          role: client.role || 'client'
+          role: client.role || 'utilisateur'
         },
         JWT_SECRET,
         { expiresIn: '24h' }
@@ -77,8 +93,9 @@ const authController = {
         client: {
           idclient: client.idclient,
           nom: client.nom,
+          prenom: client.prenom,
           email: client.email,
-          role: client.role || 'client'
+          role: client.role || 'utilisateur'
         }
       });
     } catch (error) {

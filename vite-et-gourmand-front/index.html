@@ -35,6 +35,7 @@
       <div class="hidden md:flex items-center gap-8 font-medium text-stone-600">
         <a href="#a-propos" class="hover:text-[#8f3d35] transition">À Propos</a>
         <a href="#carte" class="hover:text-[#8f3d35] transition">La Carte</a>
+        <a href="menus.html" class="hover:text-[#8f3d35] transition">Nos Menus</a>
         <a href="#galerie" class="hover:text-[#8f3d35] transition">Galerie</a>
         <a href="#contact" class="hover:text-[#8f3d35] transition">Contact & Devis</a>
       </div>
@@ -42,18 +43,18 @@
       <!-- Actions de droite -->
       <div class="flex items-center gap-4">
         <div id="user-profile-zone">
-          <button onclick="toggleModal('login-modal')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">
-            <i data-lucide="user" class="w-4 h-4"></i> Connexion
+          <button type="button" onclick="toggleModal('login-modal')" aria-haspopup="dialog" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">
+            <i data-lucide="user" class="w-4 h-4" aria-hidden="true"></i> Connexion
           </button>
         </div>
 
-        <button onclick="toggleDrawer('cart-drawer')" class="relative p-2.5 text-stone-700 hover:text-[#8f3d35] transition bg-stone-100 rounded-full">
-          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-          <span id="global-cart-count" class="absolute -top-1 -right-1 bg-[#8f3d35] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+        <button type="button" onclick="toggleDrawer('cart-drawer')" aria-haspopup="dialog" aria-label="Ouvrir le panier" class="relative p-2.5 text-stone-700 hover:text-[#8f3d35] transition bg-stone-100 rounded-full">
+          <i data-lucide="shopping-bag" class="w-5 h-5" aria-hidden="true"></i>
+          <span id="global-cart-count" class="absolute -top-1 -right-1 bg-[#8f3d35] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center" aria-hidden="true">0</span>
         </button>
 
-        <button id="burger-btn" class="md:hidden p-2 text-stone-700 hover:bg-stone-100 rounded-lg transition">
-          <i data-lucide="menu" class="w-6 h-6"></i>
+        <button type="button" id="burger-btn" aria-label="Ouvrir le menu de navigation" aria-expanded="false" aria-controls="mobile-menu" class="md:hidden p-2 text-stone-700 hover:bg-stone-100 rounded-lg transition">
+          <i data-lucide="menu" class="w-6 h-6" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -62,6 +63,7 @@
     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-stone-100 px-4 py-4 space-y-2 shadow-lg">
       <a href="#a-propos" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">À Propos</a>
       <a href="#carte" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">La Carte</a>
+      <a href="menus.html" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Nos Menus</a>
       <a href="#galerie" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Galerie</a>
       <a href="#contact" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Contact & Devis</a>
     </div>
@@ -74,7 +76,7 @@
     <div class="bg-stone-900 text-white p-6 rounded-2xl shadow-xl border border-stone-800">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-stone-800 pb-4 mb-4 gap-4">
         <div>
-          <span class="bg-amber-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">Client</span>
+          <span id="dashboard-role-badge" class="bg-amber-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">Utilisateur</span>
           <h2 class="text-xl font-bold mt-1.5">Espace : <span id="dashboard-user-name" class="font-normal text-stone-400"></span></h2>
         </div>
         <button onclick="logout()" class="text-xs bg-stone-800 hover:bg-stone-700 text-stone-300 px-4 py-2 rounded-xl transition flex items-center gap-2 border border-stone-700">
@@ -82,7 +84,15 @@
         </button>
       </div>
       <div id="dashboard-content">
-        <p class="text-sm text-stone-400">Bienvenue ! Consultez la carte et passez commande ci-dessous.</p>
+        <div id="zone-admin-employe" class="hidden mb-5 bg-stone-800/60 border border-stone-700 rounded-xl p-4">
+          <p class="text-sm font-bold text-amber-400 mb-2">Espace de gestion</p>
+          <div class="flex flex-wrap gap-2">
+            <a href="admin-menus.html" class="text-xs bg-amber-500 hover:bg-amber-600 text-stone-900 font-bold px-4 py-2 rounded-xl">Gérer les menus</a>
+            <a href="admin-commandes.html" class="text-xs bg-stone-100 hover:bg-white text-stone-900 font-bold px-4 py-2 rounded-xl">Gérer les commandes</a>
+            <a id="lien-tableau-bord" href="admin-dashboard.html" class="hidden text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl">Tableau de bord (CA, stock, employés)</a>
+          </div>
+        </div>
+        <p class="text-sm text-stone-400">Historique de vos commandes :</p>
         <div id="mes-commandes-list" class="mt-4 space-y-2 text-sm"></div>
       </div>
     </div>
@@ -97,7 +107,10 @@
     <div class="absolute inset-0 bg-black/50 z-0"></div>
     <div class="max-w-5xl mx-auto text-center relative z-10">
       <span class="text-amber-400 font-semibold tracking-widest text-xs uppercase bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-xs">Artisan & Traiteur</span>
-
+      <div class="flex flex-wrap justify-center gap-4 mt-6">
+        <a href="#carte" class="bg-amber-500 hover:bg-amber-600 text-stone-900 font-bold px-8 py-3.5 rounded-full canva-button shadow-lg shadow-amber-500/20">Découvrir la Carte</a>
+        <a href="#contact" class="bg-white/20 hover:bg-white/30 text-white font-semibold px-8 py-3.5 rounded-full border border-white/30 backdrop-blur-sm transition">Demander un Devis</a>
+      </div>
     </div>
   </header>
 
@@ -111,7 +124,7 @@
         <p class="text-stone-600 mb-6 leading-relaxed">Nos menus s'adaptent aux saisons et sont soigneusement élaborés en utilisant des produits frais et locaux de notre région avec une touche ensoleillée des îles.</p>
       </div>
       <div class="relative">
-        <img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=800&auto=format&fit=crop" alt="Cuisine de Chef" class="rounded-2xl shadow-xl w-full object-cover h-96">
+        <img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=800&auto=format&fit=crop" alt="Chef préparant un plat en cuisine professionnelle" class="rounded-2xl shadow-xl w-full object-cover h-96">
       </div>
     </div>
   </section>
@@ -121,10 +134,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
       <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Prestations & Menus</span>
       <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-2">Commandez ou réservez vos formules</h2>
-      <p class="text-stone-500 mt-2">Ajoutez des produits au panier pour passer commande.</p>
+      <p class="text-stone-500 mt-2">Ajoutez un menu au panier pour passer commande, ou <a href="menus.html" class="text-[#8f3d35] font-semibold underline">consultez tous nos menus avec filtres</a>.</p>
     </div>
 
-    <div id="produits-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div id="menus-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
       <p class="col-span-3 text-center text-stone-400 text-sm">Chargement de la carte...</p>
     </div>
   </section>
@@ -135,50 +148,69 @@
       <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Immersion Visuelle</span>
       <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-2">Le soin du détail en images</h2>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Buffet">
-      <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Assiette">
-      <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Punch au coco">
-      <img src="https://images.unsplash.com/photo-1516685018646-549198525c1b?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Dessert">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <img src="https://images.pexels.com/photos/29436323/pexels-photo-29436323.jpeg" alt="Vin servi dans un verre de vin" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm">
+      <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Assiette garnie sur une table avec verres, panier à pain, couvert, bougie">
+      <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=400&auto=format&fit=crop" class="rounded-xl h-60 w-full object-cover hover:opacity-90 transition shadow-sm" alt="Ballons colorés collés au plafond">
     </div>
   </section>
 
   <!-- SECTION FORMULAIRE CONTACT / DEVIS -->
-  <section id="contact" class="py-20 bg-stone-300 text-white relative">
+  <section id="contact" class="py-20 relative bg-[#fff4dd]">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
-        <span class="text-amber-400 font-bold text-xs uppercase tracking-wider">Votre Projet</span>
-        <h2 class="text-3xl font-serif font-bold text-white mt-1">Concevons votre menu idéal</h2>
-        <p class="text-stone-400 text-sm mt-2">Nos conseillers et chefs vous établissent un chiffrage personnalisé sous 24 heures.</p>
+        <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider bg-white px-3 py-1 rounded-full">Votre Projet</span>
+        <h2 class="text-3xl font-serif font-bold text-stone-900 mt-3">Concevons votre menu idéal</h2>
+        <p class="text-stone-700 text-sm mt-2">Nos conseillers et chefs vous établissent un chiffrage personnalisé sous 24 heures.</p>
       </div>
 
-      <form id="request-form" class="space-y-6 bg-white/5 p-8 rounded-2xl border border-white/10 backdrop-blur-sm">
+      <form id="request-form" class="space-y-6 bg-white p-8 rounded-2xl border border-stone-200 shadow-lg">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label class="block text-xs font-bold uppercase text-stone-300 mb-2">Nom ou Entreprise *</label>
-            <input type="text" id="form-name" required class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 text-sm" placeholder="Ex: Marie Dupont">
+            <label for="form-name" class="block text-xs font-bold uppercase text-stone-600 mb-2">Nom ou Entreprise *</label>
+            <input type="text" id="form-name" required class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#8f3d35] text-sm" placeholder="Ex: Marie Dupont">
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase text-stone-300 mb-2">Adresse E-mail *</label>
-            <input type="email" id="form-email" required class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 text-sm" placeholder="Ex: marie@exemple.com">
+            <label for="form-email" class="block text-xs font-bold uppercase text-stone-600 mb-2">Adresse E-mail *</label>
+            <input type="email" id="form-email" required class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#8f3d35] text-sm" placeholder="Ex: marie@exemple.com">
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold uppercase text-stone-300 mb-2">Détails de l'événement</label>
-          <textarea id="request-details" rows="4" class="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 text-sm" placeholder="Indiquez ici le nombre d'invités, le lieu, la date voulue ou vos contraintes spécifiques..."></textarea>
+          <label for="request-details" class="block text-xs font-bold uppercase text-stone-600 mb-2">Détails de l'événement</label>
+          <textarea id="request-details" rows="4" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#8f3d35] text-sm" placeholder="Indiquez ici le nombre d'invités, le lieu, la date voulue ou vos contraintes spécifiques..."></textarea>
         </div>
 
-        <button type="submit" id="submit-request" class="w-full bg-amber-500 hover:bg-amber-600 text-stone-900 py-3.5 rounded-xl font-bold canva-button flex items-center justify-center gap-2">
+        <button type="submit" id="submit-request" class="w-full text-white py-3.5 rounded-xl font-bold canva-button flex items-center justify-center gap-2" style="background-color: #243029;">
           <span class="submit-idle">Envoyer ma Demande de Projet</span>
         </button>
-        <div id="form-message" class="hidden text-center text-sm font-semibold p-4 rounded-xl"></div>
+        <div id="form-message" class="hidden text-center text-sm font-semibold p-4 rounded-xl" role="status" aria-live="polite"></div>
       </form>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="bg-stone-950 text-stone-500 py-8 border-t border-stone-900 text-center text-xs">
-    <p>&copy; 2026 Vite et Gourmand - Traiteur. Tous droits réservés.</p>
+  <footer class="bg-white text-stone-700 border-t border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8 text-sm">
+      <div>
+        <p class="font-serif text-lg font-bold text-[#243029] mb-2">Vite et Gourmand</p>
+        <p class="text-stone-600">Traiteur artisanal à Bordeaux, pour tous vos événements.</p>
+      </div>
+      <div>
+        <p class="font-bold text-stone-800 mb-2">Contact</p>
+        <p class="text-stone-600">
+          <a href="tel:0526142525" class="hover:text-[#8f3d35] transition">05 26 14 25 25</a>
+        </p>
+      </div>
+      <div>
+        <p class="font-bold text-stone-800 mb-2">Informations</p>
+        <ul class="space-y-1">
+          <li><a href="cgv.html" class="text-stone-600 hover:text-[#8f3d35] transition">Conditions générales de vente</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-stone-200 py-4 text-center text-xs text-stone-500">
+      &copy; 2026 Vite et Gourmand - Traiteur. Tous droits réservés.
+    </div>
   </footer>
 
   <!-- ========================================================================= -->
@@ -190,7 +222,7 @@
       <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
         <div class="p-6 border-b border-stone-100 flex items-center justify-between bg-stone-50">
           <h2 class="text-base font-bold text-stone-900 flex items-center gap-2"><i data-lucide="shopping-bag" class="text-[#8f3d35] w-5 h-5"></i> Votre Panier</h2>
-          <button onclick="toggleDrawer('cart-drawer')" class="p-2 text-stone-400 hover:text-stone-600 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
+          <button type="button" onclick="toggleDrawer('cart-drawer')" aria-label="Fermer le panier" class="p-2 text-stone-400 hover:text-stone-600 rounded-lg"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button>
         </div>
         <div class="flex-1 overflow-y-auto p-6 space-y-4" id="cart-items-list">
           <p class="text-stone-400 text-center py-8 text-sm">Sélectionnez des formules sur la carte pour les ajouter.</p>
@@ -200,7 +232,7 @@
             <p>Montant total</p>
             <p id="cart-total-price" class="text-lg font-black text-[#8f3d35]">0,00 €</p>
           </div>
-          <div id="checkout-message" class="hidden text-xs font-semibold p-3 rounded-lg mb-3"></div>
+          <div id="checkout-message" class="hidden text-xs font-semibold p-3 rounded-lg mb-3" role="status" aria-live="polite"></div>
           <button onclick="checkoutCart()" class="w-full bg-[#243029] hover:bg-[#34453b] text-white py-3.5 rounded-xl font-bold canva-button text-sm tracking-wide">Passer la commande</button>
         </div>
       </div>
@@ -210,10 +242,11 @@
   <!-- ========================================================================= -->
   <!-- 5. COMPOSANT CACHÉ : CONNEXION / INSCRIPTION (MODAL RÉEL) -->
   <!-- ========================================================================= -->
-  <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4">
+  <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4" role="dialog" aria-modal="true" aria-labelledby="titre-login-modal">
     <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-xs" onclick="toggleModal('login-modal')"></div>
     <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl z-10 relative border border-stone-100">
-      <button onclick="toggleModal('login-modal')" class="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+      <button type="button" onclick="toggleModal('login-modal')" aria-label="Fermer la fenêtre de connexion" class="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600"><i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i></button>
+      <h2 id="titre-login-modal" class="sr-only">Connexion ou inscription</h2>
 
       <!-- Onglets Connexion / Inscription -->
       <div class="flex gap-2 mb-5 bg-stone-100 p-1 rounded-xl">
@@ -223,20 +256,34 @@
 
       <!-- Formulaire Connexion -->
       <form id="form-connexion" class="space-y-3">
+        <label for="connexion-email" class="sr-only">Adresse e-mail</label>
         <input type="email" id="connexion-email" required placeholder="Adresse e-mail" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <label for="connexion-password" class="sr-only">Mot de passe</label>
         <input type="password" id="connexion-password" required placeholder="Mot de passe" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
         <button type="submit" class="w-full bg-[#243029] hover:bg-[#8f3d35] text-white py-2.5 rounded-xl text-sm font-bold canva-button">Se connecter</button>
       </form>
 
       <!-- Formulaire Inscription -->
       <form id="form-inscription" class="space-y-3 hidden">
-        <input type="text" id="inscription-nom" required placeholder="Nom complet" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <div class="grid grid-cols-2 gap-2">
+          <label for="inscription-nom" class="sr-only">Nom</label>
+          <input type="text" id="inscription-nom" required placeholder="Nom" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+          <label for="inscription-prenom" class="sr-only">Prénom</label>
+          <input type="text" id="inscription-prenom" required placeholder="Prénom" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        </div>
+        <label for="inscription-telephone" class="sr-only">Numéro de GSM</label>
+        <input type="tel" id="inscription-telephone" required placeholder="Numéro de GSM" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <label for="inscription-adresse" class="sr-only">Adresse postale complète</label>
+        <input type="text" id="inscription-adresse" required placeholder="Adresse postale complète" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <label for="inscription-email" class="sr-only">Adresse e-mail</label>
         <input type="email" id="inscription-email" required placeholder="Adresse e-mail" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <label for="inscription-password" class="sr-only">Mot de passe</label>
         <input type="password" id="inscription-password" required placeholder="Mot de passe" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        <p class="text-[10px] text-stone-400 leading-tight">10 caractères min., avec au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.</p>
         <button type="submit" class="w-full bg-[#243029] hover:bg-[#8f3d35] text-white py-2.5 rounded-xl text-sm font-bold canva-button">Créer mon compte</button>
       </form>
 
-      <div id="auth-message" class="hidden text-xs font-semibold p-3 rounded-lg mt-3"></div>
+      <div id="auth-message" class="hidden text-xs font-semibold p-3 rounded-lg mt-3" role="status" aria-live="polite"></div>
     </div>
   </div>
 
@@ -244,13 +291,13 @@
   <!-- 6. LOGIQUE MÉTIER & SYSTÈME JAVASCRIPT (CONNECTÉ À L'API RÉELLE) -->
   <!-- ========================================================================= -->
   <script>
-    // ⚙️ Adresse de ton backend Node.js/Express (à adapter en production)
+    //  Adresse de ton backend Node.js/Express 
     const API_URL = 'http://localhost:3001/api';
 
     // Initialisation des icônes au chargement initial
     window.addEventListener('DOMContentLoaded', () => {
       window.lucide.createIcons();
-      chargerProduits();
+      chargerMenusCarte();
       verifierSessionExistante();
     });
 
@@ -272,37 +319,38 @@
     // =========================================================
     // PRODUITS : récupération réelle depuis l'API
     // =========================================================
-    async function chargerProduits() {
-      const container = document.getElementById('produits-container');
+    async function chargerMenusCarte() {
+      const container = document.getElementById('menus-container');
       try {
-        const res = await fetch(`${API_URL}/produits`);
+        const res = await fetch(`${API_URL}/menus`);
         const data = await res.json();
-        const produits = data.produits || [];
+        const menus = data.menus || [];
 
-        if (produits.length === 0) {
-          container.innerHTML = `<p class="col-span-3 text-center text-stone-400 text-sm">Aucun produit disponible pour le moment.</p>`;
+        if (menus.length === 0) {
+          container.innerHTML = `<p class="col-span-3 text-center text-stone-400 text-sm">Aucun menu disponible pour le moment.</p>`;
           return;
         }
 
-        container.innerHTML = produits.map(p => `
+        container.innerHTML = menus.slice(0, 6).map(m => `
           <div class="bg-white rounded-2xl p-5 shadow-sm border border-stone-200/60 flex flex-col justify-between">
             <div>
-              <img src="${p.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop'}" alt="${p.nom}" class="rounded-xl w-full h-48 object-cover mb-4">
-              <span class="bg-red-50 text-[#8f3d35] font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">${p.categorie}</span>
-              <h3 class="text-lg font-bold mt-2 text-stone-900">${p.nom}</h3>
-              <p class="text-sm text-stone-500 mt-1">${p.description || ''}</p>
+              <img src="${m.image_apercu || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop'}" alt="${m.titre}" class="rounded-xl w-full h-48 object-cover mb-4">
+              <span class="bg-red-50 text-[#8f3d35] font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">${m.theme}</span>
+              <h3 class="text-lg font-bold mt-2 text-stone-900">${m.titre}</h3>
+              <p class="text-sm text-stone-500 mt-1">${(m.description || '').slice(0, 90)}</p>
+              <p class="text-xs text-stone-400 mt-1">À partir de ${m.nombre_personnes_min} personnes</p>
             </div>
             <div class="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
-              <span class="text-lg font-black text-stone-900">${Number(p.prix).toFixed(2).replace('.', ',')} €</span>
-              <button onclick='addToCart(${p.idproduit}, ${JSON.stringify(p.nom)}, ${p.prix})' class="bg-[#243029] hover:bg-[#8f3d35] text-white px-4 py-2 rounded-xl text-xs font-bold canva-button flex items-center gap-1.5">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Ajouter
+              <span class="text-lg font-black text-stone-900">${Number(m.prix_base).toFixed(2).replace('.', ',')} €</span>
+              <button onclick='addToCart(${m.idmenu}, ${JSON.stringify(m.titre)}, ${m.prix_base})' ${m.stock_disponible <= 0 ? 'disabled' : ''} class="bg-[#243029] hover:bg-[#8f3d35] text-white px-4 py-2 rounded-xl text-xs font-bold canva-button flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> ${m.stock_disponible <= 0 ? 'Épuisé' : 'Ajouter'}
               </button>
             </div>
           </div>
         `).join('');
         window.lucide.createIcons();
       } catch (error) {
-        console.error('Erreur chargement produits :', error);
+        console.error('Erreur chargement menus :', error);
         container.innerHTML = `<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger la carte. Le serveur backend est-il démarré ?</p>`;
       }
     }
@@ -310,23 +358,23 @@
     // =========================================================
     // PANIER
     // =========================================================
-    function addToCart(idproduit, nom, prix) {
-      const existant = cart.find(item => item.idproduit === idproduit);
+    function addToCart(idmenu, nom, prix) {
+      const existant = cart.find(item => item.idmenu === idmenu);
       if (existant) {
         existant.quantite += 1;
       } else {
-        cart.push({ idproduit, nom, prix_unitaire: Number(prix), quantite: 1 });
+        cart.push({ idmenu, nom, prix_unitaire: Number(prix), quantite: 1 });
       }
       renderCart();
       document.getElementById('cart-drawer').classList.remove('hidden');
     }
 
-    function changeQuantity(idproduit, change) {
-      const item = cart.find(i => i.idproduit === idproduit);
+    function changeQuantity(idmenu, change) {
+      const item = cart.find(i => i.idmenu === idmenu);
       if (item) {
         item.quantite += change;
         if (item.quantite <= 0) {
-          cart = cart.filter(i => i.idproduit !== idproduit);
+          cart = cart.filter(i => i.idmenu !== idmenu);
         }
       }
       renderCart();
@@ -357,9 +405,9 @@
               <p class="text-[11px] text-stone-500">${item.prix_unitaire.toFixed(2)} € / unité</p>
             </div>
             <div class="flex items-center gap-2 bg-stone-100 p-1.5 rounded-lg">
-              <button onclick="changeQuantity(${item.idproduit}, -1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">-</button>
+              <button onclick="changeQuantity(${item.idmenu}, -1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">-</button>
               <span class="text-xs font-bold px-1 w-4 text-center">${item.quantite}</span>
-              <button onclick="changeQuantity(${item.idproduit}, 1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">+</button>
+              <button onclick="changeQuantity(${item.idmenu}, 1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">+</button>
             </div>
           </div>
         `;
@@ -391,8 +439,8 @@
       }
 
       const total = cart.reduce((sum, item) => sum + item.prix_unitaire * item.quantite, 0);
-      const produits = cart.map(item => ({
-        idproduit: item.idproduit,
+      const menus = cart.map(item => ({
+        idmenu: item.idmenu,
         quantite: item.quantite,
         prix_unitaire: item.prix_unitaire
       }));
@@ -404,7 +452,7 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ total, produits })
+          body: JSON.stringify({ total, menus })
         });
         const data = await res.json();
 
@@ -415,6 +463,7 @@
         msgDiv.classList.remove('hidden');
         cart = [];
         renderCart();
+        chargerMesCommandes();
       } catch (error) {
         msgDiv.className = "text-xs font-semibold p-3 rounded-lg mb-3 bg-red-50 text-red-700 border border-red-200";
         msgDiv.textContent = error.message;
@@ -475,6 +524,9 @@
     document.getElementById('form-inscription').addEventListener('submit', async function(e) {
       e.preventDefault();
       const nom = document.getElementById('inscription-nom').value;
+      const prenom = document.getElementById('inscription-prenom').value;
+      const telephone = document.getElementById('inscription-telephone').value;
+      const adresse = document.getElementById('inscription-adresse').value;
       const email = document.getElementById('inscription-email').value;
       const password = document.getElementById('inscription-password').value;
       const msgDiv = document.getElementById('auth-message');
@@ -483,7 +535,7 @@
         const res = await fetch(`${API_URL}/auth/inscription`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nom, email, password })
+          body: JSON.stringify({ nom, prenom, telephone, adresse, email, password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Erreur lors de l'inscription.");
@@ -505,18 +557,81 @@
       profileZone.innerHTML = `
         <div class="flex items-center gap-2 bg-stone-100 border border-stone-200 rounded-full pl-3 pr-1 py-1 shadow-xs">
           <span class="text-xs font-semibold text-stone-700">Bonjour, <strong class="text-stone-900">${client.nom}</strong></span>
-          <button onclick="toggleDashboard()" class="bg-[#243029] text-white text-[10px] uppercase font-black px-3 py-1.5 rounded-full hover:bg-stone-800 transition">Mon espace</button>
+          <button type="button" onclick="toggleDashboard()" class="bg-[#243029] text-white text-[10px] uppercase font-black px-3 py-1.5 rounded-full hover:bg-stone-800 transition">Mon espace</button>
         </div>
       `;
       document.getElementById('dashboard-user-name').textContent = client.nom;
       document.getElementById('form-name').value = client.nom;
       document.getElementById('form-email').value = client.email;
+
+      const role = client.role || 'utilisateur';
+      const badge = document.getElementById('dashboard-role-badge');
+      const zoneAdmin = document.getElementById('zone-admin-employe');
+      const libellesRole = { admin: 'Administrateur', employe: 'Employé', utilisateur: 'Utilisateur' };
+      badge.textContent = libellesRole[role] || 'Utilisateur';
+
+      if (role === 'admin' || role === 'employe') {
+        zoneAdmin.classList.remove('hidden');
+      } else {
+        zoneAdmin.classList.add('hidden');
+      }
+
+      const lienTableauBord = document.getElementById('lien-tableau-bord');
+      if (role === 'admin') {
+        lienTableauBord.classList.remove('hidden');
+      } else {
+        lienTableauBord.classList.add('hidden');
+      }
+
+      chargerMesCommandes();
       window.lucide.createIcons();
     }
 
+    async function chargerMesCommandes() {
+      const container = document.getElementById('mes-commandes-list');
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      container.innerHTML = `<p class="text-stone-500 text-xs">Chargement...</p>`;
+      try {
+        const res = await fetch(`${API_URL}/commandes`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const commandes = data.commandes || [];
+
+        if (commandes.length === 0) {
+          container.innerHTML = `<p class="text-stone-500 text-xs">Vous n'avez pas encore passé de commande.</p>`;
+          return;
+        }
+
+        container.innerHTML = commandes.map(c => `
+          <div class="bg-stone-800/60 border border-stone-700 rounded-xl p-3">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-white">Commande #${c.idcommande}</span>
+              <span class="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-semibold">${c.statut}</span>
+            </div>
+            <p class="text-stone-400 text-[11px] mt-1">${new Date(c.date_commande).toLocaleDateString('fr-FR')} • ${Number(c.total).toFixed(2)} €</p>
+            <ul class="text-[11px] text-stone-300 mt-1 list-disc list-inside">
+              ${c.details.map(d => `<li>${d.nom_produit || d.nom_menu || 'Article'} × ${d.quantite}</li>`).join('')}
+            </ul>
+          </div>
+        `).join('');
+      } catch (error) {
+        container.innerHTML = `<p class="text-red-400 text-xs">Impossible de charger vos commandes.</p>`;
+      }
+    }
+
     function toggleDashboard() {
-      document.getElementById('business-dashboard').classList.toggle('hidden');
-      document.getElementById('business-dashboard').scrollIntoView({ behavior: 'smooth' });
+      console.log('toggleDashboard() appelé');
+      const dashboard = document.getElementById('business-dashboard');
+      const estCacheActuellement = dashboard.classList.contains('hidden');
+      console.log('État avant clic : caché =', estCacheActuellement);
+      if (estCacheActuellement) {
+        dashboard.classList.remove('hidden');
+      } else {
+        dashboard.classList.add('hidden');
+      }
     }
 
     function logout() {
@@ -531,7 +646,7 @@
       window.lucide.createIcons();
     }
 
-    // Restaure la session si un token valide est déjà stocké (rafraîchissement de page)
+    // Restaure la session si un token valide est déjà stocké 
     function verifierSessionExistante() {
       const token = localStorage.getItem('token');
       const client = localStorage.getItem('client');
@@ -540,7 +655,7 @@
       }
     }
 
-    // GESTION DU FORMULAIRE DE CONTACT (reste une simple simulation, pas d'endpoint dédié pour l'instant)
+    // GESTION DU FORMULAIRE DE CONTACT 
     document.getElementById('request-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const msgDiv = document.getElementById('form-message');

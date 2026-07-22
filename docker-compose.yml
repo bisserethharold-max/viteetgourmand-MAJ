@@ -1,27 +1,78 @@
 services:
+
   mysql:
     image: mysql:8.0
-    container_name: viteetgourmand_mysql
+    container_name: vg_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root_password_dev
+      MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: mydb
       MYSQL_USER: traiteur_user
       MYSQL_PASSWORD: password123
     ports:
       - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - vg_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-  mongodb:
+  mongo:
     image: mongo:7.0
-    container_name: viteetgourmand_mongo
+    container_name: vg_mongo
     restart: unless-stopped
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - vg_mongo_data:/data/db
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: vg_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP (utilisé par le backend pour envoyer les emails)
+      - "8025:8025"   # Interface web pour consulter les emails reçus
+
+  backend:
+    build: .
+    container_name: vg_backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      mailpit:
+        condition: service_started
+    environment:
+      PORT: 3001
+      DB_HOST: mysql          # nom du service Docker, pas 127.0.0.1
+      DB_PORT: 3306           # port INTERNE au réseau Docker (pas 3307)
+      DB_USER: traiteur_user
+      DB_PASSWORD: password123
+      DB_NAME: mydb
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB_NAME: vite_et_gourmand_stats
+      JWT_SECRET: LaPhraseSuperSecreteDeBatmanQuePersonneNePeutDeviner2026
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+    ports:
+      - "3001:3001"
+
+  frontend:
+    image: nginx:alpine
+    container_name: vg_frontend
+    restart: unless-stopped
+    volumes:
+      - ./vite-et-gourmand-front:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
 
 volumes:
-  mysql_data:
-  mongo_data:
+  vg_mysql_data:
+  vg_mongo_data:

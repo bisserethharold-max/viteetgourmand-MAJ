@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nos Menus - Vite et Gourmand</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body, button, input, select { font-family: 'Playfair Display', Georgia, serif !important; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+  <nav class="bg-white shadow-sm border-b border-stone-100 py-5 px-6 flex justify-between items-center">
+    <a href="index.html" class="font-serif text-2xl font-bold text-[#243029]">Vite et Gourmand</a>
+    <a href="index.html" class="text-sm font-semibold text-stone-600 hover:text-[#8f3d35]">&larr; Retour au site</a>
+  </nav>
+
+  <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6 text-center">
+    <h1 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900">Nos Menus & Prestations</h1>
+    <p class="text-stone-500 mt-2">Filtrez pour trouver la formule idéale pour votre événement.</p>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- BARRE DE FILTRES -->
+  <!-- ================================================================= -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
+    <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div>
+        <label for="filtre-prix-min" class="block text-xs font-bold uppercase text-stone-500 mb-1">Prix min (€)</label>
+        <input type="number" id="filtre-prix-min" min="0" placeholder="0" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#8f3d35]">
+      </div>
+      <div>
+        <label for="filtre-prix-max" class="block text-xs font-bold uppercase text-stone-500 mb-1">Prix max (€)</label>
+        <input type="number" id="filtre-prix-max" min="0" placeholder="500" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#8f3d35]">
+      </div>
+      <div>
+        <label for="filtre-theme" class="block text-xs font-bold uppercase text-stone-500 mb-1">Thème</label>
+        <select id="filtre-theme" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#8f3d35]">
+          <option value="">Tous</option>
+          <option value="Noel">Noël</option>
+          <option value="Paques">Pâques</option>
+          <option value="Classique">Classique</option>
+          <option value="Evenement">Événement</option>
+        </select>
+      </div>
+      <div>
+        <label for="filtre-regime" class="block text-xs font-bold uppercase text-stone-500 mb-1">Régime</label>
+        <select id="filtre-regime" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#8f3d35]">
+          <option value="">Tous</option>
+          <option value="classique">Classique</option>
+          <option value="vegetarien">Végétarien</option>
+          <option value="vegan">Vegan</option>
+        </select>
+      </div>
+      <div>
+        <label for="filtre-personnes-min" class="block text-xs font-bold uppercase text-stone-500 mb-1">Personnes min.</label>
+        <input type="number" id="filtre-personnes-min" min="0" placeholder="Ex: 10" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#8f3d35]">
+      </div>
+    </div>
+    <div class="text-right mt-3">
+      <button type="button" id="btn-reset-filtres" aria-label="Réinitialiser tous les filtres de recherche" class="text-xs text-stone-500 hover:text-[#8f3d35] underline">Réinitialiser les filtres</button>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- GRILLE DES MENUS -->
+  <!-- ================================================================= -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+    <div id="menus-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <p class="col-span-3 text-center text-stone-400 text-sm">Chargement des menus...</p>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- MODAL DÉTAIL D'UN MENU -->
+  <!-- ================================================================= -->
+  <div id="detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4" role="dialog" aria-modal="true" aria-label="Détail du menu">
+    <div class="absolute inset-0 bg-stone-900/60" onclick="fermerDetail()"></div>
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl relative z-10">
+      <button type="button" onclick="fermerDetail()" aria-label="Fermer le détail du menu" class="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button>
+      <div id="detail-content"><p class="text-center text-stone-400 text-sm">Chargement...</p></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3001/api';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      window.lucide.createIcons();
+      chargerMenus();
+
+      // Chaque changement de filtre relance la recherche dynamiquement (pas de rechargement de page)
+      ['filtre-prix-min', 'filtre-prix-max', 'filtre-theme', 'filtre-regime', 'filtre-personnes-min'].forEach(id => {
+        document.getElementById(id).addEventListener('input', chargerMenus);
+        document.getElementById(id).addEventListener('change', chargerMenus);
+      });
+
+      document.getElementById('btn-reset-filtres').addEventListener('click', () => {
+        document.getElementById('filtre-prix-min').value = '';
+        document.getElementById('filtre-prix-max').value = '';
+        document.getElementById('filtre-theme').value = '';
+        document.getElementById('filtre-regime').value = '';
+        document.getElementById('filtre-personnes-min').value = '';
+        chargerMenus();
+      });
+    });
+
+    async function chargerMenus() {
+      const container = document.getElementById('menus-container');
+
+      const params = new URLSearchParams();
+      const prixMin = document.getElementById('filtre-prix-min').value;
+      const prixMax = document.getElementById('filtre-prix-max').value;
+      const theme = document.getElementById('filtre-theme').value;
+      const regime = document.getElementById('filtre-regime').value;
+      const personnesMin = document.getElementById('filtre-personnes-min').value;
+
+      if (prixMin) params.append('prix_min', prixMin);
+      if (prixMax) params.append('prix_max', prixMax);
+      if (theme) params.append('theme', theme);
+      if (regime) params.append('regime', regime);
+      if (personnesMin) params.append('personnes_min', personnesMin);
+
+      try {
+        const res = await fetch(`${API_URL}/menus?${params.toString()}`);
+        const data = await res.json();
+        const menus = data.menus || [];
+
+        if (menus.length === 0) {
+          container.innerHTML = `<p class="col-span-3 text-center text-stone-400 text-sm">Aucun menu ne correspond à ces critères.</p>`;
+          return;
+        }
+
+        container.innerHTML = menus.map(m => `
+          <div class="bg-white rounded-2xl shadow-sm border border-stone-200/60 overflow-hidden flex flex-col">
+            <img src="${m.image_apercu || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop'}" alt="${m.titre}" class="w-full h-44 object-cover">
+            <div class="p-5 flex flex-col flex-1">
+              <span class="bg-red-50 text-[#8f3d35] font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider w-fit">${m.theme}</span>
+              <h3 class="text-lg font-bold mt-2 text-stone-900">${m.titre}</h3>
+              <p class="text-sm text-stone-500 mt-1 flex-1">${m.description.slice(0, 90)}${m.description.length > 90 ? '…' : ''}</p>
+              <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-sm">
+                <span class="text-stone-500">À partir de <strong class="text-stone-900">${m.nombre_personnes_min} pers.</strong></span>
+                <span class="text-lg font-black text-stone-900">${Number(m.prix_base).toFixed(2).replace('.', ',')} €</span>
+              </div>
+              <button onclick="voirDetail(${m.idmenu})" class="mt-4 w-full bg-[#243029] hover:bg-[#8f3d35] text-white py-2.5 rounded-xl text-xs font-bold transition">Voir le détail</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = `<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger les menus. Le serveur est-il démarré ?</p>`;
+      }
+    }
+
+    async function voirDetail(idmenu) {
+      const modal = document.getElementById('detail-modal');
+      const content = document.getElementById('detail-content');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      content.innerHTML = `<p class="text-center text-stone-400 text-sm">Chargement...</p>`;
+
+      try {
+        const res = await fetch(`${API_URL}/menus/${idmenu}`);
+        const data = await res.json();
+        const m = data.menu;
+
+        const galerie = (m.images || []).map(img => `<img src="${img.url}" class="w-full h-32 object-cover rounded-lg">`).join('');
+
+        const platsParType = { entree: [], plat: [], dessert: [] };
+        (m.plats || []).forEach(p => {
+          if (platsParType[p.type]) platsParType[p.type].push(p);
+        });
+
+        function listePlats(titre, liste) {
+          if (liste.length === 0) return '';
+          return `
+            <div class="mb-3">
+              <p class="text-xs font-bold uppercase text-stone-500 mb-1">${titre}</p>
+              <ul class="text-sm text-stone-700 space-y-1">
+                ${liste.map(p => `<li>• ${p.nom}${p.allergenes.length ? ` <span class="text-red-500 text-xs">(${p.allergenes.map(a => a.nom).join(', ')})</span>` : ''}</li>`).join('')}
+              </ul>
+            </div>
+          `;
+        }
+
+        content.innerHTML = `
+          <span class="bg-red-50 text-[#8f3d35] font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">${m.theme} • ${m.regime}</span>
+          <h2 class="text-2xl font-serif font-bold text-stone-900 mt-2 mb-3">${m.titre}</h2>
+          ${galerie ? `<div class="grid grid-cols-3 gap-2 mb-4">${galerie}</div>` : ''}
+          <p class="text-sm text-stone-600 mb-4">${m.description}</p>
+
+          ${listePlats('Entrées', platsParType.entree)}
+          ${listePlats('Plats', platsParType.plat)}
+          ${listePlats('Desserts', platsParType.dessert)}
+
+          <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-stone-100 text-sm">
+            <p><strong>Personnes min. :</strong> ${m.nombre_personnes_min}</p>
+            <p><strong>Prix de base :</strong> ${Number(m.prix_base).toFixed(2).replace('.', ',')} €</p>
+            <p><strong>Stock disponible :</strong> ${m.stock_disponible}</p>
+          </div>
+          ${m.conditions ? `<div class="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800"><strong>Conditions :</strong> ${m.conditions}</div>` : ''}
+
+          <div id="commande-message" class="hidden mt-4 text-xs font-semibold p-3 rounded-lg" role="status" aria-live="polite"></div>
+          <button onclick='commanderMenu(${m.idmenu}, ${JSON.stringify(m.titre)}, ${m.prix_base}, ${m.stock_disponible})' class="mt-5 w-full bg-[#243029] hover:bg-[#8f3d35] text-white py-3 rounded-xl text-sm font-bold transition" ${m.stock_disponible <= 0 ? 'disabled' : ''}>
+            ${m.stock_disponible <= 0 ? 'Stock épuisé' : `Commander ce menu (${Number(m.prix_base).toFixed(2).replace('.', ',')} €)`}
+          </button>
+        `;
+      } catch (error) {
+        content.innerHTML = `<p class="text-center text-red-500 text-sm">Impossible de charger le détail de ce menu.</p>`;
+      }
+    }
+
+    function fermerDetail() {
+      const modal = document.getElementById('detail-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    async function commanderMenu(idmenu, titre, prix, stock) {
+      const msgDiv = document.getElementById('commande-message');
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        msgDiv.className = "mt-4 text-xs font-semibold p-3 rounded-lg bg-amber-50 text-amber-700 border border-amber-200";
+        msgDiv.textContent = "Connectez-vous depuis la page d'accueil pour passer commande.";
+        msgDiv.classList.remove('hidden');
+        return;
+      }
+
+      if (stock <= 0) return;
+
+      try {
+        const res = await fetch(`${API_URL}/commandes`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            total: Number(prix),
+            menus: [{ idmenu, quantite: 1, prix_unitaire: Number(prix) }]
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur lors de la commande.");
+
+        msgDiv.className = "mt-4 text-xs font-semibold p-3 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200";
+        msgDiv.textContent = `Commande #${data.idcommande} enregistrée avec succès pour "${titre}" !`;
+        msgDiv.classList.remove('hidden');
+      } catch (error) {
+        msgDiv.className = "mt-4 text-xs font-semibold p-3 rounded-lg bg-red-50 text-red-700 border border-red-200";
+        msgDiv.textContent = error.message;
+        msgDiv.classList.remove('hidden');
+      }
+    }
+  </script>
+</body>
+</html>

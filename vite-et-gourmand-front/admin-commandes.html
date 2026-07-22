@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Commandes - Vite et Gourmand</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <style>
+    body, button, select { font-family: 'Playfair Display', Georgia, serif !important; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+  <nav class="bg-stone-900 text-white py-5 px-6 flex justify-between items-center">
+    <a href="index.html" class="font-serif text-xl font-bold">Vite et Gourmand — Commandes</a>
+    <a href="index.html" class="text-sm text-stone-300 hover:text-white">&larr; Retour au site</a>
+  </nav>
+
+  <div id="acces-refuse" class="hidden max-w-2xl mx-auto mt-16 bg-red-50 border border-red-200 text-red-700 p-6 rounded-2xl text-center" role="alert">
+    <p class="font-bold mb-2">Accès réservé</p>
+    <p class="text-sm">Cette page est réservée aux comptes Administrateur ou Employé.</p>
+  </div>
+
+  <div id="admin-content" class="hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <h2 class="text-lg font-bold mb-4">Toutes les commandes</h2>
+    <div id="liste-commandes" class="space-y-4">
+      <p class="text-stone-400 text-sm">Chargement...</p>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3001/api';
+    const STATUTS = ['En attente', 'Confirmée', 'En préparation', 'Livrée', 'Annulée'];
+
+    window.addEventListener('DOMContentLoaded', verifierAcces);
+
+    function verifierAcces() {
+      const clientRaw = localStorage.getItem('client');
+      const client = clientRaw ? JSON.parse(clientRaw) : null;
+      if (!client || (client.role !== 'admin' && client.role !== 'employe')) {
+        document.getElementById('acces-refuse').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('admin-content').classList.remove('hidden');
+      chargerCommandes();
+    }
+
+    function getToken() { return localStorage.getItem('token'); }
+
+    async function chargerCommandes() {
+      const container = document.getElementById('liste-commandes');
+      try {
+        const res = await fetch(`${API_URL}/commandes/toutes`, {
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        const commandes = data.commandes || [];
+
+        if (commandes.length === 0) {
+          container.innerHTML = `<p class="text-stone-400 text-sm">Aucune commande pour le moment.</p>`;
+          return;
+        }
+
+        container.innerHTML = commandes.map(c => `
+          <div class="bg-white border border-stone-200 rounded-2xl p-5">
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
+              <div>
+                <p class="font-bold text-sm text-stone-900">Commande #${c.idcommande} — ${c.client_prenom} ${c.client_nom}</p>
+                <p class="text-xs text-stone-500">${c.client_email} • ${new Date(c.date_commande).toLocaleString('fr-FR')}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-black">${Number(c.total).toFixed(2)} €</span>
+                <label for="statut-${c.idcommande}" class="sr-only">Statut de la commande #${c.idcommande}</label>
+                <select id="statut-${c.idcommande}" onchange="changerStatut(${c.idcommande}, this.value)" aria-label="Modifier le statut de la commande ${c.idcommande}" class="text-xs border border-stone-200 rounded-lg px-2 py-1.5">
+                  ${STATUTS.map(s => `<option value="${s}" ${s === c.statut ? 'selected' : ''}>${s}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <ul class="text-xs text-stone-600 list-disc list-inside space-y-0.5">
+              ${c.details.map(d => `<li>${d.nom_produit || d.nom_menu || 'Article'} × ${d.quantite} (${Number(d.prix_unitaire).toFixed(2)} € / unité)</li>`).join('')}
+            </ul>
+          </div>
+        `).join('');
+      } catch (error) {
+        container.innerHTML = `<p class="text-red-500 text-sm">Impossible de charger les commandes.</p>`;
+      }
+    }
+
+    async function changerStatut(idcommande, statut) {
+      try {
+        const res = await fetch(`${API_URL}/commandes/${idcommande}/statut`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ statut })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+      } catch (error) {
+        alert("Erreur lors de la mise à jour du statut : " + error.message);
+        chargerCommandes();
+      }
+    }
+  </script>
+</body>
+</html>

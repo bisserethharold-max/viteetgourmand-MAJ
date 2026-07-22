@@ -1,10 +1,18 @@
 import express from 'express';
-import { passerCommande } from '../controllers/commandeController.js';
+import {
+  passerCommande,
+  getMesCommandes,
+  getToutesLesCommandes,
+  modifierStatutCommande
+} from '../controllers/commandeController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// 🔒 Route SÉCURISÉE : Le middleware va vérifier le token AVANT de donner l'accès au contrôleur
+// 🔒 Toutes les routes commandes nécessitent d'être connecté
 router.post('/', authMiddleware, passerCommande);
+router.get('/', authMiddleware, getMesCommandes);
+router.get('/toutes', authMiddleware, getToutesLesCommandes);
+router.put('/:id/statut', authMiddleware, modifierStatutCommande);
 
 export default router;
