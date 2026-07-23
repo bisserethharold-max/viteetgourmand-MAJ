@@ -95,6 +95,8 @@ const authController = {
           nom: client.nom,
           prenom: client.prenom,
           email: client.email,
+          telephone: client.telephone || '',
+          adresse: client.adresse || '',
           role: client.role || 'utilisateur'
         }
       });

@@ -4,11 +4,15 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js'; 
 import dotenv from 'dotenv';
 import Database from './config/Database.js';
+import MongoDatabase from './config/MongoDatabase.js';
 import commandeRoutes from './routes/commandeRoutes.js';
 import menuRoutes from './routes/menuRoutes.js';
 import catalogueRoutes from './routes/catalogueRoutes.js';
 import employeRoutes from './routes/employeRoutes.js';
 import statistiquesRoutes from './routes/statistiquesRoutes.js';
+import parametresRoutes from './routes/parametresRoutes.js';
+import locationRoutes from './routes/locationRoutes.js';
+import trackingRoutes from './routes/trackingRoutes.js';
 
 // 1. Configuration des variables d'environnement
 dotenv.config();
@@ -23,6 +27,10 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 
 // 4. Connexions et configuration de la base de données
+MongoDatabase.connect().catch(err => {
+  console.error("⚠️ MongoDB indisponible au démarrage (non bloquant) :", err.message);
+});
+
 Database.connect()
   .then(async () => {
     console.log("✅ Connecté avec succès à la base de données MySQL (Docker)");
@@ -203,10 +211,101 @@ Database.connect()
         );
       `);
 
-      console.log("📐 Tables du module 'menus' prêtes (menu, menu_image, plat, allergene, plat_allergene, menu_plat) !");
+        console.log("📐 Tables du module 'menus' prêtes (menu, menu_image, plat, allergene, plat_allergene, menu_plat) !");
     } catch (menuTableError) {
       console.error("🚨 Erreur lors de la configuration des tables menus :", menuTableError.message);
     }
+
+    // F. Table des paramètres globaux (livraison, réductions) — une seule ligne
+    try {
+      await Database.query(`
+        CREATE TABLE IF NOT EXISTS parametres (
+          idparametre INT PRIMARY KEY DEFAULT 1,
+          frais_base_livraison DECIMAL(10,2) NOT NULL DEFAULT 5.00,
+          tarif_par_km DECIMAL(10,2) NOT NULL DEFAULT 0.59,
+          adresse_restaurant VARCHAR(255) NOT NULL DEFAULT 'Bordeaux, France',
+          seuil_personnes_supplementaires INT NOT NULL DEFAULT 5,
+          pourcentage_reduction_personnes DECIMAL(5,2) NOT NULL DEFAULT 10.00
+        );
+      `);
+      await Database.query(`
+        INSERT INTO parametres (idparametre, frais_base_livraison, tarif_par_km, adresse_restaurant, seuil_personnes_supplementaires, pourcentage_reduction_personnes)
+        VALUES (1, 5.00, 0.59, 'Bordeaux, France', 5, 10.00)
+        ON DUPLICATE KEY UPDATE idparametre = idparametre;
+      `);
+      try {
+        await Database.query("ALTER TABLE parametres ADD COLUMN seuil_personnes_supplementaires INT NOT NULL DEFAULT 5;");
+      } catch (e) { /* déjà fait */ }
+      try {
+        await Database.query("ALTER TABLE parametres ADD COLUMN pourcentage_reduction_personnes DECIMAL(5,2) NOT NULL DEFAULT 10.00;");
+      } catch (e) { /* déjà fait */ }
+
+      console.log("📐 Table 'parametres' prête (livraison + réduction par nombre de personnes) !");
+    } catch (paramError) {
+      console.error("🚨 Erreur lors de la configuration des paramètres :", paramError.message);
+    }
+
+    // G. Module LOCATION de matériel (même logique que menus)
+    try {
+      await Database.query(`
+        CREATE TABLE IF NOT EXISTS location (
+          idlocation INT AUTO_INCREMENT PRIMARY KEY,
+          titre VARCHAR(150) NOT NULL,
+          description TEXT NOT NULL,
+          image_url VARCHAR(255),
+          prix_location DECIMAL(10,2) NOT NULL,
+          caution DECIMAL(10,2) NOT NULL,
+          conditions_recuperation TEXT,
+          conditions_remise TEXT,
+          stock_disponible INT NOT NULL DEFAULT 0,
+          actif TINYINT NOT NULL DEFAULT 1
+        );
+      `);
+
+      await Database.query(`
+        CREATE TABLE IF NOT EXISTS location_commande (
+          idlocation_commande INT AUTO_INCREMENT PRIMARY KEY,
+          idcommande INT NOT NULL,
+          idlocation INT NOT NULL,
+          quantite INT NOT NULL,
+          date_pret DATE NOT NULL,
+          date_retour DATE NOT NULL,
+          caution_appliquee DECIMAL(10,2) NOT NULL,
+          prix_unitaire DECIMAL(10,2) NOT NULL,
+          FOREIGN KEY (idcommande) REFERENCES commandes(idcommande),
+          FOREIGN KEY (idlocation) REFERENCES location(idlocation)
+        );
+      `);
+      console.log("📐 Tables du module 'location' prêtes (location, location_commande) !");
+    } catch (locationTableError) {
+      console.error("🚨 Erreur lors de la configuration des tables location :", locationTableError.message);
+    }
+
+    // H. Ajustements sur commandes/details_commande pour livraison, réduction, paiement
+    try {
+      await Database.query("ALTER TABLE commandes ADD COLUMN distance_km DECIMAL(6,2) NOT NULL DEFAULT 0;");
+    } catch (e) { /* déjà fait */ }
+    try {
+      await Database.query("ALTER TABLE commandes ADD COLUMN frais_livraison DECIMAL(10,2) NOT NULL DEFAULT 0;");
+    } catch (e) { /* déjà fait */ }
+    try {
+      await Database.query("ALTER TABLE commandes ADD COLUMN reduction_appliquee DECIMAL(10,2) NOT NULL DEFAULT 0;");
+    } catch (e) { /* déjà fait */ }
+    try {
+      await Database.query("ALTER TABLE commandes ADD COLUMN mode_paiement VARCHAR(30) NOT NULL DEFAULT 'carte';");
+    } catch (e) { /* déjà fait */ }
+    try {
+      await Database.query("ALTER TABLE commandes ADD COLUMN adresse_livraison VARCHAR(255) NOT NULL DEFAULT '';");
+    } catch (e) { /* déjà fait */ }
+    try {
+      await Database.query("ALTER TABLE commandes ADD COLUMN ville_livraison VARCHAR(100) NOT NULL DEFAULT '';");
+    } catch (e) { /* déjà fait */ }
+    try {
+      await Database.query("ALTER TABLE commandes ADD COLUMN date_prestation DATE NULL;");
+    } catch (e) { /* déjà fait */ }
+    try {
+      await Database.query("ALTER TABLE commandes ADD COLUMN heure_livraison VARCHAR(10) NOT NULL DEFAULT '';");
+    } catch (e) { /* déjà fait */ }
   })
   .catch(err => {
     console.error("❌ Erreur de connexion générale :", err);
@@ -220,6 +319,9 @@ app.use('/api/menus', menuRoutes);
 app.use('/api/catalogue', catalogueRoutes);
 app.use('/api/employes', employeRoutes);
 app.use('/api/statistiques', statistiquesRoutes);
+app.use('/api/parametres', parametresRoutes);
+app.use('/api/locations', locationRoutes);
+app.use('/api/tracking', trackingRoutes);
 
 // 6. Route de secours (404)
 app.use((req, res) => {
