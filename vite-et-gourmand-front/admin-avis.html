@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modération des Avis - Vite et Gourmand</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <style>
+    body, button { font-family: 'Playfair Display', Georgia, serif !important; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+  <nav class="bg-stone-900 text-white py-5 px-6 flex justify-between items-center">
+    <a href="index.html" class="font-serif text-xl font-bold">Vite et Gourmand — Modération des Avis</a>
+    <a href="index.html" class="text-sm text-stone-300 hover:text-white">&larr; Retour au site</a>
+  </nav>
+
+  <div id="acces-refuse" class="hidden max-w-2xl mx-auto mt-16 bg-red-50 border border-red-200 text-red-700 p-6 rounded-2xl text-center" role="alert">
+    <p class="font-bold mb-2">Accès réservé</p>
+    <p class="text-sm">Cette page est réservée aux comptes Administrateur ou Employé.</p>
+  </div>
+
+  <main id="admin-content" class="hidden max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <h2 class="text-lg font-bold mb-4">Avis en attente de validation</h2>
+    <div id="avis-en-attente" class="space-y-3 mb-10">
+      <p class="text-stone-400 text-sm">Chargement...</p>
+    </div>
+
+    <h2 class="text-lg font-bold mb-4">Tous les avis</h2>
+    <div id="tous-les-avis" class="space-y-3"></div>
+  </main>
+
+  <script>
+    const API_URL = 'https://viteetgourmand-maj-production.up.railway.app/api';
+
+    window.addEventListener('DOMContentLoaded', verifierAcces);
+
+    function verifierAcces() {
+      const clientRaw = localStorage.getItem('client');
+      const client = clientRaw ? JSON.parse(clientRaw) : null;
+      if (!client || (client.role !== 'admin' && client.role !== 'employe')) {
+        document.getElementById('acces-refuse').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('admin-content').classList.remove('hidden');
+      chargerAvis();
+    }
+
+    function getToken() { return localStorage.getItem('token'); }
+
+    const LIBELLES_STATUT = { en_attente: 'En attente', valide: 'Validé', refuse: 'Refusé' };
+    const COULEURS_STATUT = {
+      en_attente: 'bg-amber-50 text-amber-700 border-amber-200',
+      valide: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      refuse: 'bg-red-50 text-red-700 border-red-200'
+    };
+
+    function carteAvis(a) {
+      return `
+        <div class="bg-white border border-stone-200 rounded-xl p-4">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <p class="font-bold text-sm text-stone-900">${a.prenom} ${a.nom} <span class="text-amber-500">${'⭐'.repeat(a.note)}</span></p>
+              <p class="text-xs text-stone-500">${a.email} • ${new Date(a.date_avis).toLocaleDateString('fr-FR')}</p>
+            </div>
+            <span class="text-[10px] font-bold uppercase px-2 py-1 rounded-full border ${COULEURS_STATUT[a.statut]}">${LIBELLES_STATUT[a.statut]}</span>
+          </div>
+          <p class="text-sm text-stone-700 italic mb-3">"${a.commentaire}"</p>
+          <div class="flex gap-2">
+            ${a.statut !== 'valide' ? `<button onclick="changerStatut(${a.idavis}, 'valide')" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-1.5 rounded-lg font-semibold">Valider</button>` : ''}
+            ${a.statut !== 'refuse' ? `<button onclick="changerStatut(${a.idavis}, 'refuse')" class="text-xs bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1.5 rounded-lg font-semibold">Refuser</button>` : ''}
+            <button onclick="supprimerAvis(${a.idavis})" class="text-xs bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg font-semibold">Supprimer</button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function chargerAvis() {
+      try {
+        const res = await fetch(`${API_URL}/avis/tous`, {
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        const avis = data.avis || [];
+
+        const enAttente = avis.filter(a => a.statut === 'en_attente');
+        document.getElementById('avis-en-attente').innerHTML = enAttente.map(carteAvis).join('') || '<p class="text-stone-400 text-sm">Aucun avis en attente.</p>';
+        document.getElementById('tous-les-avis').innerHTML = avis.map(carteAvis).join('') || '<p class="text-stone-400 text-sm">Aucun avis pour le moment.</p>';
+      } catch (error) {
+        document.getElementById('avis-en-attente').innerHTML = '<p class="text-red-500 text-sm">Impossible de charger les avis.</p>';
+      }
+    }
+
+    async function changerStatut(idavis, statut) {
+      try {
+        const res = await fetch(`${API_URL}/avis/${idavis}/statut`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify({ statut })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        chargerAvis();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    async function supprimerAvis(idavis) {
+      if (!confirm("Supprimer définitivement cet avis ?")) return;
+      try {
+        const res = await fetch(`${API_URL}/avis/${idavis}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        chargerAvis();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+  </script>
+</body>
+</html>
