@@ -13,6 +13,7 @@ import statistiquesRoutes from './routes/statistiquesRoutes.js';
 import parametresRoutes from './routes/parametresRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
 import trackingRoutes from './routes/trackingRoutes.js';
+import avisRoutes from './routes/avisRoutes.js';
 
 // 1. Configuration des variables d'environnement
 dotenv.config();
@@ -281,6 +282,24 @@ Database.connect()
       console.error("🚨 Erreur lors de la configuration des tables location :", locationTableError.message);
     }
 
+    // G-bis. Table des avis clients (visibles publiquement uniquement après validation)
+    try {
+      await Database.query(`
+        CREATE TABLE IF NOT EXISTS avis (
+          idavis INT AUTO_INCREMENT PRIMARY KEY,
+          idclient INT NOT NULL,
+          note TINYINT NOT NULL,
+          commentaire VARCHAR(500) NOT NULL,
+          statut VARCHAR(20) NOT NULL DEFAULT 'en_attente',
+          date_avis TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (idclient) REFERENCES client(idclient)
+        );
+      `);
+      console.log("📐 Table 'avis' prête (statuts : en_attente / valide / refuse) !");
+    } catch (avisTableError) {
+      console.error("🚨 Erreur lors de la configuration de la table avis :", avisTableError.message);
+    }
+
     // H. Ajustements sur commandes/details_commande pour livraison, réduction, paiement
     try {
       await Database.query("ALTER TABLE commandes ADD COLUMN distance_km DECIMAL(6,2) NOT NULL DEFAULT 0;");
@@ -322,6 +341,7 @@ app.use('/api/statistiques', statistiquesRoutes);
 app.use('/api/parametres', parametresRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/tracking', trackingRoutes);
+app.use('/api/avis', avisRoutes);
 
 // 6. Route de secours (404)
 app.use((req, res) => {
