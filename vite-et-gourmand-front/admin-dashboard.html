@@ -46,6 +46,26 @@
       <div id="stat-par-statut" class="flex flex-wrap gap-3 mb-10"></div>
     </section>
 
+    <!-- STATISTIQUES DE FRÉQUENTATION (MongoDB) -->
+    <section aria-labelledby="titre-mongo" class="mb-10">
+      <h2 id="titre-mongo" class="text-lg font-bold mb-1">Statistiques de fréquentation</h2>
+      <p class="text-xs text-stone-400 mb-4">Données issues de MongoDB (base NoSQL) — visites enregistrées sur le site</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="bg-white border border-stone-200 rounded-2xl p-5">
+          <p class="text-xs uppercase font-bold text-stone-500">Total des visites enregistrées</p>
+          <p id="stat-total-visites" class="text-3xl font-black text-sky-600 mt-1">—</p>
+        </div>
+        <div class="bg-white border border-stone-200 rounded-2xl p-5">
+          <p class="text-xs uppercase font-bold text-stone-500">Commandes journalisées (logs)</p>
+          <p id="stat-logs-commandes" class="text-3xl font-black text-stone-900 mt-1">—</p>
+        </div>
+      </div>
+      <h3 class="text-sm font-bold uppercase text-stone-500 mb-2">Visites par page</h3>
+      <div id="stat-visites-page" class="flex flex-wrap gap-3">
+        <p class="text-stone-400 text-sm">Chargement...</p>
+      </div>
+    </section>
+
     <!-- STOCK -->
     <section aria-labelledby="titre-stock" class="mb-10">
       <h2 id="titre-stock" class="text-lg font-bold mb-4">Suivi du stock</h2>
@@ -116,6 +136,7 @@
       }
       document.getElementById('admin-content').classList.remove('hidden');
       chargerStatistiques();
+      chargerStatsMongo();
       chargerEmployes();
     }
 
@@ -157,6 +178,29 @@
         `).join('') || '<p class="text-stone-400 text-sm">Aucun produit.</p>';
       } catch (error) {
         console.error(error);
+      }
+    }
+
+    async function chargerStatsMongo() {
+      try {
+        const res = await fetch(`${API_URL}/tracking/stats`, {
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        document.getElementById('stat-total-visites').textContent = data.total_visites;
+        document.getElementById('stat-logs-commandes').textContent = data.total_commandes_loggees;
+
+        const pages = data.visites_par_page || [];
+        document.getElementById('stat-visites-page').innerHTML = pages.map(p => `
+          <div class="bg-white border border-stone-200 rounded-xl px-4 py-2 text-sm">
+            <span class="font-bold">${p._id}</span> : ${p.total} visite(s)
+          </div>
+        `).join('') || '<p class="text-stone-400 text-sm">Aucune visite enregistrée pour le moment.</p>';
+      } catch (error) {
+        console.error(error);
+        document.getElementById('stat-visites-page').innerHTML = '<p class="text-red-500 text-sm">Impossible de charger les statistiques MongoDB.</p>';
       }
     }
 
