@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration du Matériel - Vite et Gourmand</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <style>
+    body, button, input, select, textarea { font-family: 'Playfair Display', Georgia, serif !important; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+  <nav class="bg-stone-900 text-white py-5 px-6 flex justify-between items-center">
+    <a href="index.html" class="font-serif text-xl font-bold">Vite et Gourmand — Administration Matériel</a>
+    <a href="index.html" class="text-sm text-stone-300 hover:text-white">&larr; Retour au site</a>
+  </nav>
+
+  <div id="acces-refuse" class="hidden max-w-2xl mx-auto mt-16 bg-red-50 border border-red-200 text-red-700 p-6 rounded-2xl text-center" role="alert">
+    <p class="font-bold mb-2">Accès réservé</p>
+    <p class="text-sm">Cette page est réservée aux comptes Administrateur ou Employé.</p>
+  </div>
+
+  <div id="admin-content" class="hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 mb-10">
+      <h2 class="text-lg font-bold mb-4" id="form-titre">Ajouter du matériel</h2>
+      <form id="location-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="hidden" id="location-id">
+
+        <div class="md:col-span-2">
+          <label class="block text-xs font-bold uppercase text-stone-500 mb-1">Titre *</label>
+          <input type="text" id="location-titre" required class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-xs font-bold uppercase text-stone-500 mb-1">Description *</label>
+          <textarea id="location-description" required rows="3" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-500 mb-1">Prix de location / jour (€) *</label>
+          <input type="number" id="location-prix" required min="0" step="0.01" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-500 mb-1">Caution (€) *</label>
+          <input type="number" id="location-caution" required min="0" step="0.01" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-500 mb-1">Stock disponible</label>
+          <input type="number" id="location-stock" min="0" value="0" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-stone-500 mb-1">Image (URL)</label>
+          <input type="text" id="location-image" placeholder="https://..." class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm">
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-xs font-bold uppercase text-stone-500 mb-1">Conditions de récupération</label>
+          <textarea id="location-conditions-recup" rows="2" placeholder="Ex : à récupérer 48h avant la prestation à notre entrepôt..." class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm"></textarea>
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-xs font-bold uppercase text-stone-500 mb-1">Conditions de remise</label>
+          <textarea id="location-conditions-remise" rows="2" placeholder="Ex : à restituer propre sous 24h après la prestation, sous peine de retenue sur caution..." class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm"></textarea>
+        </div>
+
+        <div class="md:col-span-2 flex gap-3">
+          <button type="submit" class="bg-[#243029] hover:bg-[#8f3d35] text-white px-6 py-2.5 rounded-xl text-sm font-bold transition">Enregistrer</button>
+          <button type="button" id="btn-annuler" class="hidden bg-stone-200 text-stone-700 px-6 py-2.5 rounded-xl text-sm font-bold">Annuler la modification</button>
+        </div>
+        <div id="form-message" class="hidden md:col-span-2 text-sm font-semibold p-3 rounded-lg" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <h2 class="text-lg font-bold mb-4">Matériel existant</h2>
+    <div id="liste-locations" class="space-y-3">
+      <p class="text-stone-400 text-sm">Chargement...</p>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://viteetgourmand-maj-production.up.railway.app/api';
+
+    window.addEventListener('DOMContentLoaded', verifierAcces);
+
+    function verifierAcces() {
+      const clientRaw = localStorage.getItem('client');
+      const client = clientRaw ? JSON.parse(clientRaw) : null;
+      if (!client || (client.role !== 'admin' && client.role !== 'employe')) {
+        document.getElementById('acces-refuse').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('admin-content').classList.remove('hidden');
+      chargerListeLocations();
+    }
+
+    function getToken() { return localStorage.getItem('token'); }
+
+    async function chargerListeLocations() {
+      const container = document.getElementById('liste-locations');
+      try {
+        const res = await fetch(`${API_URL}/locations`);
+        const data = await res.json();
+        const locations = data.locations || [];
+
+        if (locations.length === 0) {
+          container.innerHTML = `<p class="text-stone-400 text-sm">Aucun matériel ajouté pour le moment.</p>`;
+          return;
+        }
+
+        container.innerHTML = locations.map(l => `
+          <div class="bg-white border border-stone-200 rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <p class="font-bold text-sm text-stone-900">${l.titre}</p>
+              <p class="text-xs text-stone-500">${Number(l.prix_location).toFixed(2)} €/jour • Caution ${Number(l.caution).toFixed(2)} € • Stock: ${l.stock_disponible}</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="chargerPourModification(${l.idlocation})" class="text-xs bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg font-semibold">Modifier</button>
+              <button onclick="supprimerLocation(${l.idlocation})" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-semibold">Supprimer</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        container.innerHTML = `<p class="text-red-500 text-sm">Impossible de charger le matériel.</p>`;
+      }
+    }
+
+    async function chargerPourModification(idlocation) {
+      const res = await fetch(`${API_URL}/locations/${idlocation}`);
+      const data = await res.json();
+      const l = data.location;
+
+      document.getElementById('location-id').value = l.idlocation;
+      document.getElementById('location-titre').value = l.titre;
+      document.getElementById('location-description').value = l.description;
+      document.getElementById('location-prix').value = l.prix_location;
+      document.getElementById('location-caution').value = l.caution;
+      document.getElementById('location-stock').value = l.stock_disponible;
+      document.getElementById('location-image').value = l.image_url || '';
+      document.getElementById('location-conditions-recup').value = l.conditions_recuperation || '';
+      document.getElementById('location-conditions-remise').value = l.conditions_remise || '';
+
+      document.getElementById('form-titre').textContent = `Modifier : ${l.titre}`;
+      document.getElementById('btn-annuler').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('btn-annuler').addEventListener('click', resetFormulaire);
+
+    function resetFormulaire() {
+      document.getElementById('location-form').reset();
+      document.getElementById('location-id').value = '';
+      document.getElementById('form-titre').textContent = 'Ajouter du matériel';
+      document.getElementById('btn-annuler').classList.add('hidden');
+    }
+
+    document.getElementById('location-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const msgDiv = document.getElementById('form-message');
+      const idlocation = document.getElementById('location-id').value;
+
+      const payload = {
+        titre: document.getElementById('location-titre').value,
+        description: document.getElementById('location-description').value,
+        prix_location: Number(document.getElementById('location-prix').value),
+        caution: Number(document.getElementById('location-caution').value),
+        stock_disponible: Number(document.getElementById('location-stock').value),
+        image_url: document.getElementById('location-image').value,
+        conditions_recuperation: document.getElementById('location-conditions-recup').value,
+        conditions_remise: document.getElementById('location-conditions-remise').value
+      };
+
+      try {
+        const url = idlocation ? `${API_URL}/locations/${idlocation}` : `${API_URL}/locations`;
+        const method = idlocation ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getToken()}`
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur lors de l'enregistrement.");
+
+        msgDiv.className = "md:col-span-2 text-sm font-semibold p-3 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200";
+        msgDiv.textContent = data.message;
+        msgDiv.classList.remove('hidden');
+
+        resetFormulaire();
+        chargerListeLocations();
+      } catch (error) {
+        msgDiv.className = "md:col-span-2 text-sm font-semibold p-3 rounded-lg bg-red-50 text-red-700 border border-red-200";
+        msgDiv.textContent = error.message;
+        msgDiv.classList.remove('hidden');
+      }
+    });
+
+    async function supprimerLocation(idlocation) {
+      if (!confirm("Supprimer définitivement ce matériel ?")) return;
+      try {
+        const res = await fetch(`${API_URL}/locations/${idlocation}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        chargerListeLocations();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+  </script>
+</body>
+</html>

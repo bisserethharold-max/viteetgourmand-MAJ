@@ -36,6 +36,7 @@
         <a href="#a-propos" class="hover:text-[#8f3d35] transition">À Propos</a>
         <a href="#carte" class="hover:text-[#8f3d35] transition">La Carte</a>
         <a href="menus.html" class="hover:text-[#8f3d35] transition">Nos Menus</a>
+        <a href="location.html" class="hover:text-[#8f3d35] transition">Location</a>
         <a href="#galerie" class="hover:text-[#8f3d35] transition">Galerie</a>
         <a href="#contact" class="hover:text-[#8f3d35] transition">Contact & Devis</a>
       </div>
@@ -64,6 +65,7 @@
       <a href="#a-propos" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">À Propos</a>
       <a href="#carte" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">La Carte</a>
       <a href="menus.html" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Nos Menus</a>
+      <a href="location.html" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Location</a>
       <a href="#galerie" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Galerie</a>
       <a href="#contact" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Contact & Devis</a>
     </div>
@@ -88,6 +90,7 @@
           <p class="text-sm font-bold text-amber-400 mb-2">Espace de gestion</p>
           <div class="flex flex-wrap gap-2">
             <a href="admin-menus.html" class="text-xs bg-amber-500 hover:bg-amber-600 text-stone-900 font-bold px-4 py-2 rounded-xl">Gérer les menus</a>
+            <a href="admin-location.html" class="text-xs bg-sky-500 hover:bg-sky-600 text-white font-bold px-4 py-2 rounded-xl">Gérer le matériel</a>
             <a href="admin-commandes.html" class="text-xs bg-stone-100 hover:bg-white text-stone-900 font-bold px-4 py-2 rounded-xl">Gérer les commandes</a>
             <a id="lien-tableau-bord" href="admin-dashboard.html" class="hidden text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl">Tableau de bord (CA, stock, employés)</a>
           </div>
@@ -291,7 +294,7 @@
   <!-- 6. LOGIQUE MÉTIER & SYSTÈME JAVASCRIPT (CONNECTÉ À L'API RÉELLE) -->
   <!-- ========================================================================= -->
   <script>
-    //  Adresse de ton backend Node.js/Express 
+    // ⚙️ Adresse de ton backend Node.js/Express (à adapter en production)
     const API_URL = 'https://viteetgourmand-maj-production.up.railway.app/api';
 
     // Initialisation des icônes au chargement initial
@@ -299,6 +302,11 @@
       window.lucide.createIcons();
       chargerMenusCarte();
       verifierSessionExistante();
+      fetch(`${API_URL}/tracking/visite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ page: 'index.html' })
+      }).catch(() => {});
     });
 
     // Variables d'état (Global Application State)
@@ -646,7 +654,7 @@
       window.lucide.createIcons();
     }
 
-    // Restaure la session si un token valide est déjà stocké 
+    // Restaure la session si un token valide est déjà stocké (rafraîchissement de page)
     function verifierSessionExistante() {
       const token = localStorage.getItem('token');
       const client = localStorage.getItem('client');
@@ -655,7 +663,7 @@
       }
     }
 
-    // GESTION DU FORMULAIRE DE CONTACT 
+    // GESTION DU FORMULAIRE DE CONTACT (reste une simple simulation, pas d'endpoint dédié pour l'instant)
     document.getElementById('request-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const msgDiv = document.getElementById('form-message');
