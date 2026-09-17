@@ -1,11 +1,11 @@
 import express from 'express';
-import authMiddleware from '../middlewares/authMiddleware.js';
 import { getTousLesEmployes, creerEmploye, supprimerEmploye } from '../controllers/employeController.js';
+import { verifierAuthentification, verifierRole } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', authMiddleware, getTousLesEmployes);
-router.post('/', authMiddleware, creerEmploye);
-router.delete('/:id', authMiddleware, supprimerEmploye);
+router.get('/', verifierAuthentification, verifierRole(['admin']), getTousLesEmployes);
+router.post('/', verifierAuthentification, verifierRole(['admin']), creerEmploye);
+router.delete('/:id', verifierAuthentification, verifierRole(['admin']), supprimerEmploye);
 
 export default router;

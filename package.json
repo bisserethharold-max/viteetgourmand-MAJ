@@ -2,26 +2,26 @@
   "name": "vite-et-gourmand-api",
   "version": "1.0.0",
   "type": "module",
-  "main": "src/app.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "node --watch src/app.js",
-    "tailwind:build": "tailwindcss -i ./src/styles/input.css -o ./public/css/style.css --minify",
-    "tailwind:watch": "tailwindcss -i ./src/styles/input.css -o ./public/css/style.css --watch"
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "build:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/style.css --minify",
+    "watch:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/style.css --watch"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "helmet": "^7.1.0",
-    "jsonwebtoken": "^9.0.3",
-    "mongodb": "^6.5.0",
-    "mysql2": "^3.9.2",
-    "nodemailer": "^9.0.5"
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.13.0",
+    "mysql2": "^3.12.0",
+    "nodemailer": "^6.10.0"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.17"
   }
 }

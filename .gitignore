@@ -4,4 +4,4 @@ node_modules/
 .mongo_data/
 public/css/style.css
 .DS_Store
-*.log
+npm-debug.log*
