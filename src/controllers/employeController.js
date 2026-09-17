@@ -5,9 +5,6 @@ function estAdmin(req) {
   return req.user && req.user.role === 'admin';
 }
 
-// =========================================================
-// GET /api/employes — liste des comptes employés + admins (admin uniquement)
-// =========================================================
 export const getTousLesEmployes = async (req, res) => {
   if (!estAdmin(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur." });
@@ -23,9 +20,6 @@ export const getTousLesEmployes = async (req, res) => {
   }
 };
 
-// =========================================================
-// POST /api/employes — créer un compte employé (admin uniquement)
-// =========================================================
 export const creerEmploye = async (req, res) => {
   if (!estAdmin(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur." });
@@ -52,10 +46,6 @@ export const creerEmploye = async (req, res) => {
   }
 };
 
-// =========================================================
-// DELETE /api/employes/:id — supprimer un compte employé (admin uniquement)
-// Ne permet PAS de supprimer un compte admin par cette route (sécurité)
-// =========================================================
 export const supprimerEmploye = async (req, res) => {
   if (!estAdmin(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur." });

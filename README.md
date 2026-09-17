@@ -97,6 +97,8 @@ viteetgourmand MAJ/
 │   │   └── userRoutes.js
 │   └── services/
 │       └── emailService.js        # Envoi de l'email de bienvenue via Mailpit
+│   └── styles/
+│       └── input.css          
 │
 └── vite-et-gourmand-front/        # Frontend
     ├── index.html                 # Page d'accueil (carte, connexion, panier)

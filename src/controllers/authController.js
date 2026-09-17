@@ -4,54 +4,39 @@ import bcrypt from 'bcryptjs';
 import { envoyerEmailBienvenue } from '../services/emailService.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
-// Mot de passe : 10 caractères minimum, au moins 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
-const REGEX_MOT_DE_PASSE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{10,}$/;
+const REGEX_MOT_DE_PASSE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{10,}\$/;
+const FAKE_HASH = "\$2a\$10\$X7E96MvO1vU7L.VvW.9b6O8gA4Y3z7M2W3v7x8y9z0123456789ab";
 
 const authController = {
   inscription: async (req, res) => {
     const { nom, prenom, telephone, adresse, email, password } = req.body;
 
-    // 1. Vérification que tous les champs obligatoires sont présents
     if (!nom || !prenom || !telephone || !adresse || !email || !password) {
-      return res.status(400).json({
-        error: "Tous les champs sont obligatoires (nom, prénom, numéro de GSM, adresse, email, mot de passe)."
-      });
+      return res.status(400).json({ error: "Tous les champs sont obligatoires." });
     }
 
-    // 2. Vérification de la robustesse du mot de passe
     if (!REGEX_MOT_DE_PASSE.test(password)) {
-      return res.status(400).json({
-        error: "Le mot de passe doit contenir au moins 10 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial."
-      });
+      return res.status(400).json({ error: "Le mot de passe ne respecte pas les critères de robustesse." });
     }
 
     try {
-      // 3. Vérifier que l'email n'est pas déjà utilisé
       const existant = await Database.query("SELECT idclient FROM client WHERE email = ?;", [email]);
       if (existant && existant.length > 0) {
         return res.status(400).json({ error: "Cet email est déjà associé à un compte." });
       }
 
-      // 4. Hachage du mot de passe
       const passwordHache = await bcrypt.hash(password, 10);
 
-      // 5. Création du compte avec le rôle par défaut 'utilisateur'
       const resultInsert = await Database.query(
         `INSERT INTO client (nom, prenom, telephone, adresse, email, password, role)
          VALUES (?, ?, ?, ?, ?, ?, 'utilisateur');`,
         [nom, prenom, telephone, adresse, email, passwordHache]
       );
 
-      // 6. Envoi automatique de l'email de bienvenue (non-bloquant si ça échoue)
       envoyerEmailBienvenue(email, prenom, nom);
 
-      res.status(201).json({
-        message: "Compte créé avec succès ! Un email de bienvenue vous a été envoyé.",
-        idclient: resultInsert.insertId
-      });
+      res.status(201).json({ idclient: resultInsert.insertId });
     } catch (error) {
-      console.error("🚨 Erreur Inscription :", error.message);
       res.status(500).json({ error: "Une erreur est survenue lors de l'inscription." });
     }
   },
@@ -65,15 +50,12 @@ const authController = {
 
     try {
       const rows = await Database.query("SELECT * FROM client WHERE email = ?;", [email]);
+      const client = rows && rows.length > 0 ? rows[0] : null;
 
-      if (!rows || rows.length === 0) {
-        return res.status(401).json({ error: "Identifiants incorrects." });
-      }
+      const hashToCompare = client ? client.password : FAKE_HASH;
+      const motDePasseValide = await bcrypt.compare(password, hashToCompare);
 
-      const client = rows[0];
-
-      const motDePasseValide = await bcrypt.compare(password, client.password);
-      if (!motDePasseValide) {
+      if (!client || !motDePasseValide) {
         return res.status(401).json({ error: "Identifiants incorrects." });
       }
 
@@ -87,23 +69,34 @@ const authController = {
         { expiresIn: '24h' }
       );
 
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000
+      });
+
       res.json({
-        message: "Connexion réussie !",
-        token,
         client: {
           idclient: client.idclient,
           nom: client.nom,
           prenom: client.prenom,
           email: client.email,
-          telephone: client.telephone || '',
-          adresse: client.adresse || '',
           role: client.role || 'utilisateur'
         }
       });
     } catch (error) {
-      console.error("🚨 Erreur Connexion :", error.message);
       res.status(500).json({ error: "Une erreur est survenue lors de la connexion." });
     }
+  },
+
+  deconnexion: async (req, res) => {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+    res.json({ message: "Déconnexion réussie." });
   }
 };
 

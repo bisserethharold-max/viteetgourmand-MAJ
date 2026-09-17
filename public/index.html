@@ -765,14 +765,27 @@
     }
 
     // GESTION DU FORMULAIRE DE CONTACT 
-    document.getElementById('request-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const msgDiv = document.getElementById('form-message');
-      msgDiv.className = "text-center text-sm font-semibold p-4 rounded-xl bg-emerald-900/40 text-emerald-300 border border-emerald-800";
-      msgDiv.textContent = "Merci ! Votre demande de projet a été transmise à notre équipe.";
-      msgDiv.classList.remove('hidden');
-      this.reset();
+document.getElementById('request-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const titre = document.getElementById('form-name').value;
+  const description = document.getElementById('request-details').value;
+  const email = document.getElementById('form-email').value;
+
+  try {
+    const res = await fetch(`${API_URL}/contact`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ titre, description, email })
     });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    this.reset();
+  } catch (error) {
+    console.error(error);
+  }
+});
   </script>
 
 </body>

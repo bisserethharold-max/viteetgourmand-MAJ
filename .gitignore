@@ -1,25 +1,7 @@
-# Dépendances (générées par npm install, ne jamais versionner)
 node_modules/
-
-# Variables d'environnement (contient mots de passe et clés secrètes)
 .env
-
-# Données Docker (générées automatiquement par les conteneurs)
 .db_data/
 .mongo_data/
-
-# Logs
-*.log
-npm-debug.log*
-
-# Fichiers système
+public/css/style.css
 .DS_Store
-Thumbs.db
-
-# Éditeurs
-.vscode/
-*.swp
-
-# Fichiers de test API (optionnel, à garder si tu veux les versionner)
-# api.http
-# test.http
+*.log
