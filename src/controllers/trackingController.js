@@ -4,10 +4,7 @@ function estAdmin(req) {
   return req.user && req.user.role === 'admin';
 }
 
-// =========================================================
-// POST /api/tracking/visite — enregistre une visite de page (public, appelé depuis le frontend)
-// Corps : { page }
-// =========================================================
+
 export const enregistrerVisite = async (req, res) => {
   try {
     const { page } = req.body;
@@ -20,14 +17,12 @@ export const enregistrerVisite = async (req, res) => {
     res.status(201).json({ message: "Visite enregistrée." });
   } catch (error) {
     // Le tracking ne doit JAMAIS bloquer la navigation de l'utilisateur en cas d'échec
-    console.error("⚠️ Erreur enregistrement visite (non bloquant) :", error.message);
+    console.error("Erreur enregistrement visite (non bloquant) :", error.message);
     res.status(200).json({ message: "Tracking ignoré." });
   }
 };
 
-// =========================================================
-// GET /api/tracking/stats — statistiques de visites (admin uniquement)
-// =========================================================
+
 export const getStatsVisites = async (req, res) => {
   if (!estAdmin(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur." });
@@ -64,15 +59,11 @@ export const getStatsVisites = async (req, res) => {
       total_commandes_loggees: totalLogsCommandes
     });
   } catch (error) {
-    console.error("🚨 Erreur récupération stats MongoDB :", error.message);
+    console.error("Erreur récupération stats MongoDB :", error.message);
     res.status(500).json({ error: "Impossible de récupérer les statistiques." });
   }
 };
 
-// =========================================================
-// Fonction utilitaire : logger une commande dans MongoDB
-// (appelée depuis commandeController après chaque commande réussie)
-// =========================================================
 export async function loggerCommande(donnees) {
   try {
     const db = MongoDatabase.getDb();

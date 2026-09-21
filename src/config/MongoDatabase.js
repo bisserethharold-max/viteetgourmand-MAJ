@@ -16,9 +16,9 @@ class MongoDatabase {
     try {
       this.client = await MongoClient.connect(url);
       this.db = this.client.db(dbName);
-      console.log("✅ Connecté avec succès à MongoDB (Statistiques)");
+      console.log("Connecté avec succès à MongoDB (Statistiques)");
     } catch (error) {
-      console.error("❌ Erreur de connexion MongoDB :", error.message);
+      console.error("Erreur de connexion MongoDB :", error.message);
       throw error;
     }
   }

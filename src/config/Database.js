@@ -8,8 +8,6 @@ class Database {
     this.pool = null;
   }
 
-  // Gardé pour compatibilité : app.js appelle Database.connect() au démarrage.
-  // Avec un pool, "se connecter" = créer le pool et vérifier qu'il répond.
   async connect() {
     try {
       this.pool = mysql.createPool({
@@ -25,13 +23,12 @@ class Database {
         keepAliveInitialDelay: 10000
       });
 
-      // Vérification que la connexion fonctionne réellement (sinon erreur explicite dès le démarrage)
       const conn = await this.pool.getConnection();
       conn.release();
 
-      console.log("✅ Connecté avec succès à la base de données MySQL (pool, Docker)");
+      console.log("Connecté avec succès à la base de données MySQL (pool, Docker)");
     } catch (error) {
-      console.error("❌ Erreur de connexion MySQL :", error.message);
+      console.error("Erreur de connexion MySQL :", error.message);
       throw error;
     }
   }

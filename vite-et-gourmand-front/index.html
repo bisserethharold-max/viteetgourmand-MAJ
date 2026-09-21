@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vite et Gourmand - Traiteur</title>
- 
-  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
 
-
+  
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     html, body, button, input, textarea, select {
@@ -23,9 +22,12 @@
 </head>
 <body class="bg-stone-50/50 text-stone-800 antialiased pt-20">
 
+ 
   <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
       <a href="#" class="font-serif text-2xl font-bold tracking-tight text-[#243029]">Vite et Gourmand</a>
+
+      <!-- Menu PC -->
       <div class="hidden md:flex items-center gap-8 font-medium text-stone-600">
         <a href="#a-propos" class="hover:text-[#8f3d35] transition">À Propos</a>
         <a href="#carte" class="hover:text-[#8f3d35] transition">La Carte</a>
@@ -65,6 +67,7 @@
     </div>
   </nav>
 
+
   <div id="business-dashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
     <div class="bg-stone-900 text-white p-6 rounded-2xl shadow-xl border border-stone-800">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-stone-800 pb-4 mb-4 gap-4">
@@ -93,6 +96,7 @@
     </div>
   </div>
 
+ 
   <header class="relative bg-cover bg-center bg-no-repeat text-white overflow-hidden py-32 px-4 sm:px-6 lg:px-8" style="background-image: url('https://images.unsplash.com/photo-1577308856961-8e9ec50d0c67?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
     <div class="absolute inset-0 bg-black/50 z-0"></div>
     <div class="max-w-5xl mx-auto text-center relative z-10">
@@ -104,6 +108,7 @@
     </div>
   </header>
 
+ 
   <section id="a-propos" class="py-20 bg-[#fff4dd]">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="bloc-texte">
@@ -118,6 +123,7 @@
     </div>
   </section>
 
+  
   <section id="carte" class="py-20 bg-stone-100/60">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
       <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Prestations & Menus</span>
@@ -130,6 +136,7 @@
     </div>
   </section>
 
+  
   <section id="galerie" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
       <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Immersion Visuelle</span>
@@ -142,6 +149,7 @@
     </div>
   </section>
 
+  
   <section id="avis" class="py-20 bg-stone-100/60">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
@@ -180,6 +188,7 @@
     </div>
   </section>
 
+
   <section id="contact" class="py-20 relative bg-[#fff4dd]">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
@@ -212,6 +221,7 @@
     </div>
   </section>
 
+  
   <footer class="bg-white text-stone-700 border-t border-stone-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8 text-sm">
       <div>
@@ -236,6 +246,7 @@
     </div>
   </footer>
 
+
   <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none overflow-hidden hidden" role="dialog" aria-modal="true">
     <div class="absolute inset-0 bg-stone-900/60 opacity-100 transition-opacity pointer-events-auto" onclick="toggleDrawer('cart-drawer')"></div>
     <div class="fixed inset-y-0 right-0 max-w-full flex pointer-events-auto">
@@ -259,12 +270,14 @@
     </div>
   </div>
 
+
   <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4" role="dialog" aria-modal="true" aria-labelledby="titre-login-modal">
     <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-xs" onclick="toggleModal('login-modal')"></div>
     <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl z-10 relative border border-stone-100">
       <button type="button" onclick="toggleModal('login-modal')" aria-label="Fermer la fenêtre de connexion" class="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600"><i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i></button>
       <h2 id="titre-login-modal" class="sr-only">Connexion ou inscription</h2>
 
+      
       <div class="flex gap-2 mb-5 bg-stone-100 p-1 rounded-xl">
         <button id="tab-connexion" onclick="switchAuthTab('connexion')" class="flex-1 text-xs font-bold py-2 rounded-lg transition bg-white shadow-sm">Connexion</button>
         <button id="tab-inscription" onclick="switchAuthTab('inscription')" class="flex-1 text-xs font-bold py-2 rounded-lg transition text-stone-500">Inscription</button>
@@ -303,6 +316,7 @@
 
   <script>
     const API_URL = 'https://viteetgourmand-maj-production.up.railway.app/api';
+
     window.addEventListener('DOMContentLoaded', () => {
       window.lucide.createIcons();
       chargerMenusCarte();
@@ -316,6 +330,7 @@
     });
 
     let cart = [];
+
     function toggleDrawer(id) { document.getElementById(id).classList.toggle('hidden'); }
     function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
 
@@ -361,6 +376,7 @@
         container.innerHTML = `<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger la carte. Le serveur backend est-il démarré ?</p>`;
       }
     }
+
 
     function addToCart(idmenu, nom, prix) {
       const existant = cart.find(item => item.idmenu === idmenu);
@@ -472,6 +488,7 @@
       }
     }
 
+  
     function switchAuthTab(tab) {
       const tabConnexion = document.getElementById('tab-connexion');
       const tabInscription = document.getElementById('tab-inscription');

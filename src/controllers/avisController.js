@@ -5,9 +5,7 @@ function estAutorise(req) {
   return role === 'admin' || role === 'employe';
 }
 
-// =========================================================
-// GET /api/avis — avis VALIDÉS uniquement (public, page d'accueil)
-// =========================================================
+
 export const getAvisValides = async (req, res) => {
   try {
     const avis = await Database.query(
@@ -20,14 +18,11 @@ export const getAvisValides = async (req, res) => {
     );
     res.status(200).json({ avis });
   } catch (error) {
-    console.error("🚨 Erreur récupération avis :", error.message);
+    console.error("Erreur récupération avis :", error.message);
     res.status(500).json({ error: "Impossible de récupérer les avis." });
   }
 };
 
-// =========================================================
-// GET /api/avis/tous — TOUS les avis, quel que soit le statut (admin/employé)
-// =========================================================
 export const getTousLesAvis = async (req, res) => {
   if (!estAutorise(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
@@ -41,14 +36,11 @@ export const getTousLesAvis = async (req, res) => {
     );
     res.status(200).json({ avis });
   } catch (error) {
-    console.error("🚨 Erreur récupération de tous les avis :", error.message);
+    console.error("Erreur récupération de tous les avis :", error.message);
     res.status(500).json({ error: "Impossible de récupérer les avis." });
   }
 };
 
-// =========================================================
-// POST /api/avis — un client connecté dépose un avis (statut : en_attente par défaut)
-// =========================================================
 export const creerAvis = async (req, res) => {
   const idclient = req.user.idclient;
   const { note, commentaire } = req.body;
@@ -70,15 +62,12 @@ export const creerAvis = async (req, res) => {
       idavis: result.insertId
     });
   } catch (error) {
-    console.error("🚨 Erreur création avis :", error.message);
+    console.error("Erreur création avis :", error.message);
     res.status(500).json({ error: "Impossible d'enregistrer votre avis." });
   }
 };
 
-// =========================================================
-// PUT /api/avis/:id/statut — valider ou refuser un avis (admin/employé)
-// Corps attendu : { statut: "valide" | "refuse" }
-// =========================================================
+
 export const modifierStatutAvis = async (req, res) => {
   if (!estAutorise(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
@@ -91,14 +80,11 @@ export const modifierStatutAvis = async (req, res) => {
     await Database.query("UPDATE avis SET statut = ? WHERE idavis = ?;", [statut, req.params.id]);
     res.status(200).json({ message: "Statut de l'avis mis à jour avec succès !" });
   } catch (error) {
-    console.error("🚨 Erreur modification statut avis :", error.message);
+    console.error("Erreur modification statut avis :", error.message);
     res.status(500).json({ error: "Impossible de modifier le statut de l'avis." });
   }
 };
 
-// =========================================================
-// DELETE /api/avis/:id — supprimer un avis (admin/employé)
-// =========================================================
 export const supprimerAvis = async (req, res) => {
   if (!estAutorise(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });

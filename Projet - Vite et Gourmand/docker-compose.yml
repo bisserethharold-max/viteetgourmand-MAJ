@@ -1,25 +1,22 @@
 version: '3.8'
 
 services:
-  # --- Base de données MySQL ---
+
   mysql_db:
     image: mysql:8.0
     container_name: traiteur_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password123 # Mot de passe du super-utilisateur
-      MYSQL_DATABASE: mydb                # Nom de la base créée au démarrage
-      MYSQL_USER: traiteur_user           # Utilisateur standard pour ton appli
-      MYSQL_PASSWORD: password123         # Mot de passe de cet utilisateur
+      MYSQL_ROOT_PASSWORD: password123 
+      MYSQL_DATABASE: mydb                
+      MYSQL_USER: traiteur_user          
+      MYSQL_PASSWORD: password123        
     ports:
       - "3307:3306"
     volumes:
-      # Initialise la base avec ton schéma SQL propre
       - ./database/init:/docker-entrypoint-initdb.d
-      # Sauvegarde locale des données (ignoré par ton .gitignore !)
       - .db_data:/var/lib/mysql
 
-  # --- Base de données MongoDB (pour les logs, avis, etc.) ---
   mongo_db:
     image: mongo:latest
     container_name: traiteur_mongo
@@ -27,5 +24,4 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      # Sauvegarde locale des données Mongo
       - .mongo_data:/data/db

@@ -5,9 +5,6 @@ function estAutorise(req) {
   return role === 'admin' || role === 'employe';
 }
 
-// =========================================================
-// GET /api/locations — catalogue public
-// =========================================================
 export const getToutesLesLocations = async (req, res) => {
   try {
     const locations = await Database.query(
@@ -15,14 +12,12 @@ export const getToutesLesLocations = async (req, res) => {
     );
     res.status(200).json({ nombre: locations.length, locations });
   } catch (error) {
-    console.error("🚨 Erreur récupération locations :", error.message);
+    console.error("Erreur récupération locations :", error.message);
     res.status(500).json({ error: "Impossible de récupérer le matériel disponible." });
   }
 };
 
-// =========================================================
-// GET /api/locations/:id — détail
-// =========================================================
+
 export const getLocationParId = async (req, res) => {
   try {
     const rows = await Database.query("SELECT * FROM location WHERE idlocation = ?;", [req.params.id]);
@@ -33,9 +28,7 @@ export const getLocationParId = async (req, res) => {
   }
 };
 
-// =========================================================
-// POST /api/locations — créer (admin/employé)
-// =========================================================
+
 export const creerLocation = async (req, res) => {
   if (!estAutorise(req)) return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
   const { titre, description, image_url, prix_location, caution, conditions_recuperation, conditions_remise, stock_disponible } = req.body;
@@ -50,14 +43,11 @@ export const creerLocation = async (req, res) => {
     );
     res.status(201).json({ message: "Matériel ajouté avec succès !", idlocation: result.insertId });
   } catch (error) {
-    console.error("🚨 Erreur création location :", error.message);
+    console.error("Erreur création location :", error.message);
     res.status(500).json({ error: "Impossible d'ajouter ce matériel." });
   }
 };
 
-// =========================================================
-// PUT /api/locations/:id — modifier (admin/employé)
-// =========================================================
 export const modifierLocation = async (req, res) => {
   if (!estAutorise(req)) return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
   const { titre, description, image_url, prix_location, caution, conditions_recuperation, conditions_remise, stock_disponible } = req.body;
@@ -73,9 +63,6 @@ export const modifierLocation = async (req, res) => {
   }
 };
 
-// =========================================================
-// DELETE /api/locations/:id (admin/employé)
-// =========================================================
 export const supprimerLocation = async (req, res) => {
   if (!estAutorise(req)) return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
   try {
@@ -86,10 +73,7 @@ export const supprimerLocation = async (req, res) => {
   }
 };
 
-// =========================================================
-// POST /api/locations/reserver — réserver du matériel (client connecté)
-// Corps : { idlocation, quantite, date_pret, date_retour }
-// =========================================================
+
 export const reserverLocation = async (req, res) => {
   const { idlocation, quantite, date_pret, date_retour } = req.body;
   const idclient = req.user.idclient;
@@ -139,7 +123,7 @@ export const reserverLocation = async (req, res) => {
       nombre_jours: nbJours
     });
   } catch (error) {
-    console.error("🚨 Erreur réservation location :", error.message);
+    console.error("Erreur réservation location :", error.message);
     res.status(500).json({ error: "Impossible d'enregistrer la réservation." });
   }
 };

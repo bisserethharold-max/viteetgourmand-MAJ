@@ -2,6 +2,11 @@ import Database from '../config/Database.js';
 import { calculerPourcentageReductionMenu, calculerFraisLivraison } from './parametresController.js';
 import { loggerCommande } from './trackingController.js';
 
+function estAutorise(req) {
+  const role = req.user && req.user.role;
+  return role === 'admin' || role === 'employe';
+}
+
 export const passerCommande = async (req, res) => {
   try {
     const idclient = req.user.idclient;
@@ -14,7 +19,7 @@ export const passerCommande = async (req, res) => {
       return res.status(400).json({ error: "Le panier est vide." });
     }
 
-      if (mode_paiement === 'carte') {
+    if (mode_paiement === 'carte') {
       if (!paiement || !paiement.numero_carte || !paiement.nom_titulaire || !paiement.expiration) {
         return res.status(400).json({ error: "Informations de carte bancaire incomplètes." });
       }
@@ -23,7 +28,6 @@ export const passerCommande = async (req, res) => {
         return res.status(400).json({ error: "Informations bancaires invalides." });
       }
     }
-
 
     const sousTotalProduits = produits.reduce((sum, p) => sum + p.prix_unitaire * p.quantite, 0);
     let sousTotalMenus = 0;
@@ -120,6 +124,9 @@ export const getMesCommandes = async (req, res) => {
 };
 
 export const getToutesLesCommandes = async (req, res) => {
+  if (!estAutorise(req)) {
+    return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
+  }
   try {
     const commandes = await Database.query(
       `SELECT c.idcommande, c.total, c.statut, c.date_commande, cl.nom AS client_nom, cl.prenom AS client_prenom, cl.email AS client_email
@@ -146,6 +153,9 @@ export const getToutesLesCommandes = async (req, res) => {
 };
 
 export const modifierStatutCommande = async (req, res) => {
+  if (!estAutorise(req)) {
+    return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
+  }
   const { statut } = req.body;
   if (!statut) return res.status(400).json({ error: "Le nouveau statut est obligatoire." });
 

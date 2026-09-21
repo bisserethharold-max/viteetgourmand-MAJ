@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   api:
-    build: .
+    build:
+      context: .
+      target: production
     container_name: traiteur_api
     restart: always
     ports:
@@ -14,9 +16,6 @@ services:
       - DB_USER=traiteur_user
       - DB_PASS=password123
       - DB_NAME=mydb
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
     depends_on:
       - mysql_db
 
@@ -32,7 +31,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - ./database/init:/docker-entrypoint-initdb.d
+      - ./database/init/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - .db_data:/var/lib/mysql
 
   mongo_db:

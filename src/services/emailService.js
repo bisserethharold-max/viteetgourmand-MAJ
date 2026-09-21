@@ -1,8 +1,5 @@
 import nodemailer from 'nodemailer';
 
-// Mailpit capture les emails sans les envoyer réellement 
-// En local (hors Docker) : MAIL_HOST=localhost. Dans Docker : MAIL_HOST=mailpit (nom du service).
-// Interface web pour consulter les emails reçus : http://localhost:8025
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST || 'localhost',
   port: process.env.MAIL_PORT || 1025,
@@ -26,9 +23,9 @@ export async function envoyerEmailBienvenue(destinataire, prenom, nom) {
         </div>
       `
     });
-    console.log(`📧 Email de bienvenue envoyé à ${destinataire} (consultable sur http://localhost:8025)`);
+    console.log(`Email de bienvenue envoyé à ${destinataire} (consultable sur http://localhost:8025)`);
   } catch (error) {
-    // On ne bloque JAMAIS l'inscription si l'email échoue à s'envoyer
-    console.error("⚠️ Échec envoi email de bienvenue (inscription non bloquée) :", error.message);
+    
+    console.error("Échec envoi email de bienvenue (inscription non bloquée) :", error.message);
   }
 }

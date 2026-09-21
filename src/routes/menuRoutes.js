@@ -1,35 +1,20 @@
 import express from 'express';
-import authMiddleware from '../middlewares/authMiddleware.js';
 import {
   getTousLesMenus,
   getMenuParId,
   creerMenu,
   modifierMenu,
-  supprimerMenu,
-  getTousLesPlats,
-  creerPlat,
-  getTousLesAllergenes,
-  creerAllergene
+  supprimerMenu
 } from '../controllers/menuController.js';
+import { verifierAuthentification, verifierRole } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// visiteurs et clients
 router.get('/', getTousLesMenus);
 router.get('/:id', getMenuParId);
 
-// administeurs et employés
-router.post('/', authMiddleware, creerMenu);
-router.put('/:id', authMiddleware, modifierMenu);
-router.delete('/:id', authMiddleware, supprimerMenu);
-
-router.get('/', async (req, res) => {
-    try {
-        const menus = await Menu.find();
-        res.json(menus);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+router.post('/', verifierAuthentification, verifierRole(['admin', 'employe']), creerMenu);
+router.put('/:id', verifierAuthentification, verifierRole(['admin', 'employe']), modifierMenu);
+router.delete('/:id', verifierAuthentification, verifierRole(['admin']), supprimerMenu);
 
 export default router;

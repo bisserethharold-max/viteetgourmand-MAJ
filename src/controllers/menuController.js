@@ -1,15 +1,10 @@
 import Database from '../config/Database.js';
 
-// Vérifie que l'utilisateur connecté a le rôle admin ou employe
 function estAutorise(req) {
   const role = req.user && req.user.role;
   return role === 'admin' || role === 'employe';
 }
 
-// =========================================================
-// GET /api/menus  — vue publique avec filtres dynamiques
-// Query params optionnels : prix_max, prix_min, theme, regime, personnes_min
-// =========================================================
 export const getTousLesMenus = async (req, res) => {
   try {
     const { prix_max, prix_min, theme, regime, personnes_min } = req.query;
@@ -42,7 +37,7 @@ export const getTousLesMenus = async (req, res) => {
 
     const menus = await Database.query(sql, params);
 
-    // On récupère la première image de chaque menu pour la vue globale (aperçu)
+  
     for (const m of menus) {
       const images = await Database.query(
         "SELECT url FROM menu_image WHERE menu_idmenu = ? LIMIT 1",
@@ -53,14 +48,11 @@ export const getTousLesMenus = async (req, res) => {
 
     res.status(200).json({ nombre: menus.length, menus });
   } catch (error) {
-    console.error("🚨 Erreur récupération menus :", error.message);
+    console.error("Erreur récupération menus :", error.message);
     res.status(500).json({ error: "Impossible de récupérer les menus." });
   }
 };
 
-// =========================================================
-// GET /api/menus/:id — détail complet d'un menu
-// =========================================================
 export const getMenuParId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -84,7 +76,6 @@ export const getMenuParId = async (req, res) => {
       [id]
     );
 
-    // Pour chaque plat, on récupère ses allergènes
     for (const plat of plats) {
       plat.allergenes = await Database.query(
         `SELECT a.idallergene, a.nom
@@ -98,16 +89,12 @@ export const getMenuParId = async (req, res) => {
 
     res.status(200).json({ menu });
   } catch (error) {
-    console.error("🚨 Erreur récupération détail menu :", error.message);
+    console.error("Erreur récupération détail menu :", error.message);
     res.status(500).json({ error: "Impossible de récupérer le détail du menu." });
   }
 };
 
-// =========================================================
-// POST /api/menus — création (admin / employé uniquement)
-// Corps attendu : { titre, description, theme, regime, nombre_personnes_min,
-//                    prix_base, conditions, stock_disponible, images: [url,...], plats_ids: [id,...] }
-// =========================================================
+
 export const creerMenu = async (req, res) => {
   if (!estAutorise(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
@@ -140,14 +127,12 @@ export const creerMenu = async (req, res) => {
 
     res.status(201).json({ message: "Menu créé avec succès !", idmenu });
   } catch (error) {
-    console.error("🚨 Erreur création menu :", error.message);
+    console.error("Erreur création menu :", error.message);
     res.status(500).json({ error: "Impossible de créer le menu." });
   }
 };
 
-// =========================================================
-// PUT /api/menus/:id — modification (admin / employé uniquement)
-// =========================================================
+
 export const modifierMenu = async (req, res) => {
   if (!estAutorise(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
@@ -183,14 +168,12 @@ export const modifierMenu = async (req, res) => {
 
     res.status(200).json({ message: "Menu mis à jour avec succès !" });
   } catch (error) {
-    console.error("🚨 Erreur modification menu :", error.message);
+    console.error("Erreur modification menu :", error.message);
     res.status(500).json({ error: "Impossible de modifier le menu." });
   }
 };
 
-// =========================================================
-// DELETE /api/menus/:id — suppression (admin / employé uniquement)
-// =========================================================
+
 export const supprimerMenu = async (req, res) => {
   if (!estAutorise(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
@@ -199,14 +182,11 @@ export const supprimerMenu = async (req, res) => {
     await Database.query("DELETE FROM menu WHERE idmenu = ?;", [req.params.id]);
     res.status(200).json({ message: "Menu supprimé avec succès !" });
   } catch (error) {
-    console.error("🚨 Erreur suppression menu :", error.message);
+    console.error("Erreur suppression menu :", error.message);
     res.status(500).json({ error: "Impossible de supprimer le menu." });
   }
 };
 
-// =========================================================
-// PLATS & ALLERGÈNES — gestion simplifiée (admin / employé)
-// =========================================================
 export const getTousLesPlats = async (req, res) => {
   try {
     const plats = await Database.query("SELECT * FROM plat ORDER BY nom ASC");
@@ -232,7 +212,7 @@ export const creerPlat = async (req, res) => {
     }
     res.status(201).json({ message: "Plat créé avec succès !", idplat });
   } catch (error) {
-    console.error("🚨 Erreur création plat :", error.message);
+    console.error("Erreur création plat :", error.message);
     res.status(500).json({ error: "Impossible de créer le plat." });
   }
 };
@@ -259,7 +239,7 @@ export const creerAllergene = async (req, res) => {
     );
     res.status(201).json({ message: "Allergène créé avec succès !", idallergene: result.insertId });
   } catch (error) {
-    console.error("🚨 Erreur création allergène :", error.message);
+    console.error("Erreur création allergène :", error.message);
     res.status(500).json({ error: "Impossible de créer l'allergène." });
   }
 };

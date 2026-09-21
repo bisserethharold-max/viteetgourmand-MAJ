@@ -4,9 +4,7 @@ function estAdmin(req) {
   return req.user && req.user.role === 'admin';
 }
 
-// =========================================================
-// GET /api/statistiques — vue d'ensemble ventes / CA / stock (admin uniquement)
-// =========================================================
+
 export const getStatistiques = async (req, res) => {
   if (!estAdmin(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur." });
@@ -46,7 +44,7 @@ export const getStatistiques = async (req, res) => {
       stock_produits: stockProduits
     });
   } catch (error) {
-    console.error("🚨 Erreur récupération statistiques :", error.message);
+    console.error("Erreur récupération statistiques :", error.message);
     res.status(500).json({ error: "Impossible de récupérer les statistiques." });
   }
 };

@@ -31,7 +31,7 @@ DROP TABLE IF EXISTS `mydb`.`panier` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`panier` (
   `idpanier` INT NOT NULL AUTO_INCREMENT,
-  `dtae_creation` DATETIME NOT NULL,
+  `date_creation` DATETIME NOT NULL,
   PRIMARY KEY (`idpanier`))
 ENGINE = InnoDB;
 
@@ -65,7 +65,7 @@ DROP TABLE IF EXISTS `mydb`.`avis` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`avis` (
   `idavis` INT NOT NULL AUTO_INCREMENT,
-  `note` VARCHAR(45) NOT NULL,
+  `note` INT NOT NULL,
   `commentaire` VARCHAR(45) NOT NULL,
   `statut` VARCHAR(45) NOT NULL,
   `date_avis` DATETIME NOT NULL,
