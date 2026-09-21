@@ -70,6 +70,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Une erreur interne est survenue sur le serveur." });
 });
 
-app.listen(PORT);
-
-export default app;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Serveur démarré avec succès sur le port ${PORT}`);
+});
