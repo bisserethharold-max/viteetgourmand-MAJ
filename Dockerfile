@@ -11,4 +11,4 @@ COPY package*.json ./
 RUN npm ci --only=production
 COPY --from=builder /usr/src/app ./
 EXPOSE 3001
-CMD ["node", "app.js"]
+CMD ["node", "src/app.js"]
