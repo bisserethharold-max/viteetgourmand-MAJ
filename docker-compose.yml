@@ -13,11 +13,17 @@ services:
       - PORT=3001
       - NODE_ENV=production
       - DB_HOST=mysql_db
+      - DB_PORT=3306
       - DB_USER=traiteur_user
-      - DB_PASS=password123
+      - DB_PASSWORD= passwpord123
       - DB_NAME=mydb
+      - MONGO_URI=mongodb://mongo_db:27017/vite_et_gourmand_stats
+      - MAIL_HOST=mailpit
+      - MAIL_PORT=1025
     depends_on:
       - mysql_db
+      - mongo_db
+      - mailpit
 
   mysql_db:
     image: mysql:8.0
@@ -27,7 +33,7 @@ services:
       MYSQL_ROOT_PASSWORD: password123
       MYSQL_DATABASE: mydb
       MYSQL_USER: traiteur_user
-      MYSQL_PASSWORD: password123
+      MYSQL_PASSWORD: password123 
     ports:
       - "3307:3306"
     volumes:
@@ -42,3 +48,11 @@ services:
       - "27017:27017"
     volumes:
       - .mongo_data:/data/db
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: traiteur_mailpit
+    restart: always
+    ports:
+      - "1025:1025"
+      - "8025:8025"
