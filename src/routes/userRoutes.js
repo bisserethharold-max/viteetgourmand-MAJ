@@ -1,9 +1,9 @@
 import express from 'express';
-import authMiddleware from '../middlewares/authMiddleware.js';
+import { verifierAuthentification } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/profil', authMiddleware, (req, res) => {
+router.get('/profil', verifierAuthentification, (req, res) => {
   res.json({
     message: "Bienvenue sur votre profil sécurisé !",
     utilisateur: req.user

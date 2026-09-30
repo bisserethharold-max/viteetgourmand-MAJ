@@ -5,6 +5,15 @@ function estAutorise(req) {
   return role === 'admin' || role === 'employe';
 }
 
+function echapperHtml(chaine) {
+  if (typeof chaine !== 'string') return chaine;
+  return chaine
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 export const getAvisValides = async (req, res) => {
   try {
@@ -42,20 +51,28 @@ export const getTousLesAvis = async (req, res) => {
 };
 
 export const creerAvis = async (req, res) => {
+  if (!req.user || !req.user.idclient) {
+    return res.status(401).json({ error: "Vous devez être connecté pour publier un avis." });
+  }
+
   const idclient = req.user.idclient;
   const { note, commentaire } = req.body;
 
   if (!note || !commentaire) {
     return res.status(400).json({ error: "La note et le commentaire sont obligatoires." });
   }
-  if (note < 1 || note > 5) {
-    return res.status(400).json({ error: "La note doit être comprise entre 1 et 5." });
+  
+  const noteNumerique = Number(note);
+  if (isNaN(noteNumerique) || noteNumerique < 1 || noteNumerique > 5) {
+    return res.status(400).json({ error: "La note doit être un nombre compris entre 1 et 5." });
   }
+
+  const commentaireSecurise = echapperHtml(commentaire.trim());
 
   try {
     const result = await Database.query(
       "INSERT INTO avis (idclient, note, commentaire, statut) VALUES (?, ?, ?, 'en_attente');",
-      [idclient, note, commentaire]
+      [idclient, noteNumerique, commentaireSecurise]
     );
     res.status(201).json({
       message: "Merci pour votre avis ! Il sera visible après validation par notre équipe.",
@@ -67,17 +84,23 @@ export const creerAvis = async (req, res) => {
   }
 };
 
-
 export const modifierStatutAvis = async (req, res) => {
   if (!estAutorise(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
   }
+
   const { statut } = req.body;
   if (!['valide', 'refuse', 'en_attente'].includes(statut)) {
     return res.status(400).json({ error: "Statut invalide." });
   }
+
   try {
-    await Database.query("UPDATE avis SET statut = ? WHERE idavis = ?;", [statut, req.params.id]);
+    const result = await Database.query("UPDATE avis SET statut = ? WHERE idavis = ?;", [statut, req.params.id]);
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Avis non trouvé." });
+    }
+
     res.status(200).json({ message: "Statut de l'avis mis à jour avec succès !" });
   } catch (error) {
     console.error("Erreur modification statut avis :", error.message);
@@ -89,10 +112,17 @@ export const supprimerAvis = async (req, res) => {
   if (!estAutorise(req)) {
     return res.status(403).json({ error: "Accès réservé à l'administrateur ou à l'employé." });
   }
+
   try {
-    await Database.query("DELETE FROM avis WHERE idavis = ?;", [req.params.id]);
+    const result = await Database.query("DELETE FROM avis WHERE idavis = ?;", [req.params.id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Avis non trouvé." });
+    }
+
     res.status(200).json({ message: "Avis supprimé avec succès !" });
   } catch (error) {
+    console.error("Erreur suppression avis :", error.message);
     res.status(500).json({ error: "Impossible de supprimer l'avis." });
   }
 };

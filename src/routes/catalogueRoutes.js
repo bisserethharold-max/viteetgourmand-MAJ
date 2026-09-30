@@ -1,5 +1,5 @@
 import express from 'express';
-import authMiddleware from '../middlewares/authMiddleware.js';
+import { verifierAuthentification } from '../middlewares/authMiddleware.js';
 import {
   getTousLesPlats,
   creerPlat,
@@ -10,9 +10,9 @@ import {
 const router = express.Router();
 
 router.get('/plats', getTousLesPlats);
-router.post('/plats', authMiddleware, creerPlat);
+router.post('/plats', verifierAuthentification, creerPlat);
 
 router.get('/allergenes', getTousLesAllergenes);
-router.post('/allergenes', authMiddleware, creerAllergene);
+router.post('/allergenes', verifierAuthentification, creerAllergene);
 
 export default router;

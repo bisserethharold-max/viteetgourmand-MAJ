@@ -1,0 +1,7 @@
+node_modules
+.git
+.env
+.db_data
+Projet - Vite et Gourmand
+docs
+vite-et-gourmand-front

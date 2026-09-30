@@ -26,3 +26,5 @@ export const verifierRole = (rolesAutorises) => {
     next();
   }
 };
+
+export default verifierAuthentification;

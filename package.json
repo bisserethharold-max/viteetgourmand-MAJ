@@ -1,11 +1,12 @@
 {
-  "name": "vite-et-gourmand-api",
+"name": "vite-et-gourmand-api",
   "version": "1.0.0",
   "type": "module",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "node --watch app.js",
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js",
+    "copy:front": "ncp vite-et-gourmand-front public",
     "build:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/style.css --minify",
     "watch:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/style.css --watch"
   },
@@ -19,9 +20,10 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.13.0",
     "mysql2": "^3.12.0",
-    "nodemailer": "^6.10.0"
+    "nodemailer": "^10.0.10"
   },
   "devDependencies": {
+    "ncp": "^2.0.0",
     "tailwindcss": "^3.4.17"
   }
 }

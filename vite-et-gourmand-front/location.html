@@ -1,193 +1,325 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Location de matériel - Vite et Gourmand</title>
+  <title>Location de Matériel & Espaces - Vite et Gourmand</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
+  
   <style>
-    body, button, input, select { font-family: 'Playfair Display', Georgia, serif !important; }
+    html, body, button, input, textarea, select {
+      font-family: 'Playfair Display', Georgia, serif !important;
+    }
+    .canva-button {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   </style>
 </head>
-<body class="bg-stone-50 text-stone-800">
+<body class="bg-stone-50/50 text-stone-800 antialiased pt-20">
 
-  <nav class="bg-white shadow-sm border-b border-stone-100 py-5 px-6 flex justify-between items-center">
-    <a href="index.html" class="font-serif text-2xl font-bold text-[#243029]">Vite et Gourmand</a>
-    <a href="index.html" class="text-sm font-semibold text-stone-600 hover:text-[#8f3d35]">&larr; Retour au site</a>
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <a href="index.html" class="font-serif text-2xl font-bold tracking-tight text-[#243029]">Vite et Gourmand</a>
+
+      <div class="hidden md:flex items-center gap-8 font-medium text-stone-600">
+        <a href="index.html#a-propos" class="hover:text-[#8f3d35] transition">À Propos</a>
+        <a href="index.html#carte" class="hover:text-[#8f3d35] transition">La Carte</a>
+        <a href="menus.html" class="hover:text-[#8f3d35] transition">Nos Menus</a>
+        <a href="location.html" class="text-[#8f3d35] font-bold">Location</a>
+        <a href="index.html#avis" class="hover:text-[#8f3d35] transition">Avis</a>
+        <a href="index.html#contact" class="hover:text-[#8f3d35] transition">Contact & Devis</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div id="user-profile-zone">
+          <button type="button" onclick="toggleModal('login-modal')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">
+            <i data-lucide="user" class="w-4 h-4"></i> Connexion
+          </button>
+        </div>
+
+        <button type="button" onclick="toggleDrawer('cart-drawer')" aria-label="Ouvrir le panier" class="relative p-2.5 text-stone-700 hover:text-[#8f3d35] transition bg-stone-100 rounded-full">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span id="global-cart-count" class="absolute -top-1 -right-1 bg-[#8f3d35] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+        </button>
+
+        <button type="button" id="burger-btn" aria-label="Menu mobile" class="md:hidden p-2 text-stone-700 hover:bg-stone-100 rounded-lg transition">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-stone-100 px-4 py-4 space-y-2 shadow-lg">
+      <a href="index.html#a-propos" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">À Propos</a>
+      <a href="index.html#carte" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">La Carte</a>
+      <a href="menus.html" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Nos Menus</a>
+      <a href="location.html" class="block font-medium text-[#8f3d35] font-bold py-2.5 px-3 bg-stone-50 rounded-lg">Location</a>
+      <a href="index.html#contact" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Contact & Devis</a>
+    </div>
   </nav>
 
-  <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6 text-center">
-    <h1 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900">Location de matériel</h1>
-    <p class="text-stone-500 mt-2">Vaisselle, mobilier, décoration — tout pour compléter votre réception.</p>
+  <header class="bg-[#243029] text-white py-16 px-4">
+    <div class="max-w-7xl mx-auto text-center">
+      <span class="text-amber-400 font-semibold tracking-widest text-xs uppercase">Service événementiel</span>
+      <h1 class="text-3xl sm:text-5xl font-serif font-bold mt-2">Location de matériel & d'espaces</h1>
+      <p class="text-stone-300 text-sm sm:text-base mt-3 max-w-2xl mx-auto">Tout le nécessaire pour réussir vos réceptions, banquets et séminaires.</p>
+    </div>
   </header>
 
-  
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-    <div id="location-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <p class="col-span-3 text-center text-stone-400 text-sm">Chargement du matériel disponible...</p>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+    <div class="bg-white rounded-2xl shadow-lg border border-stone-200 p-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label for="search-input" class="block text-xs font-bold uppercase text-stone-500 mb-1">Recherche</label>
+          <input type="text" id="search-input" placeholder="Matériel, vaisselle, salle..." class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+        </div>
+
+        <div>
+          <label for="filter-type" class="block text-xs font-bold uppercase text-stone-500 mb-1">Type d'équipement</label>
+          <select id="filter-type" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+            <option value="">Tous les équipements</option>
+            <option value="Mobilier">Mobilier</option>
+            <option value="Vaisselle">Vaisselle</option>
+            <option value="Cuisine">Cuisine & Nappage</option>
+            <option value="Espace">Salles & Espaces</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="sort-prix" class="block text-xs font-bold uppercase text-stone-500 mb-1">Trier par prix</label>
+          <select id="sort-prix" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#8f3d35]">
+            <option value="">Par défaut</option>
+            <option value="asc">Prix croissant</option>
+            <option value="desc">Prix décroissant</option>
+          </select>
+        </div>
+      </div>
     </div>
   </section>
 
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div id="location-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <p class="col-span-full text-center text-stone-400 text-sm">Chargement des équipements disponibles...</p>
+    </div>
+  </main>
 
-  <div id="detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4" role="dialog" aria-modal="true" aria-label="Détail et réservation du matériel">
-    <div class="absolute inset-0 bg-stone-900/60" onclick="fermerDetail()"></div>
-    <div class="bg-white rounded-2xl max-w-xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl relative z-10">
-      <button type="button" onclick="fermerDetail()" aria-label="Fermer" class="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600"><i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i></button>
-      <div id="detail-content"><p class="text-center text-stone-400 text-sm">Chargement...</p></div>
+  <footer class="bg-white text-stone-700 border-t border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8 text-sm">
+      <div>
+        <p class="font-serif text-lg font-bold text-[#243029] mb-2">Vite et Gourmand</p>
+        <p class="text-stone-600">Traiteur artisanal à Bordeaux, pour tous vos événements.</p>
+      </div>
+      <div>
+        <p class="font-bold text-stone-800 mb-2">Contact</p>
+        <p class="text-stone-600"><a href="tel:0526142525" class="hover:text-[#8f3d35] transition">05 26 14 25 25</a></p>
+      </div>
+      <div>
+        <p class="font-bold text-stone-800 mb-2">Informations</p>
+        <ul class="space-y-1">
+          <li><a href="cgv.html" class="text-stone-600 hover:text-[#8f3d35] transition">Conditions générales de vente</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-stone-200 py-4 text-center text-xs text-stone-500">
+      &copy; 2026 Vite et Gourmand - Traiteur. Tous droits réservés.
+    </div>
+  </footer>
+
+  <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none overflow-hidden hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-stone-900/60 opacity-100 transition-opacity pointer-events-auto" onclick="toggleDrawer('cart-drawer')"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pointer-events-auto">
+      <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-stone-100 flex items-center justify-between bg-stone-50">
+          <h2 class="text-base font-bold text-stone-900 flex items-center gap-2"><i data-lucide="shopping-bag" class="text-[#8f3d35] w-5 h-5"></i> Votre Panier</h2>
+          <button type="button" onclick="toggleDrawer('cart-drawer')" class="p-2 text-stone-400 hover:text-stone-600 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-4" id="cart-items-list">
+          <p class="text-stone-400 text-center py-8 text-sm">Votre panier est vide.</p>
+        </div>
+        <div class="p-6 border-t border-stone-100 bg-stone-50/80">
+          <div class="flex justify-between text-sm font-bold text-stone-900 mb-4">
+            <p>Montant total</p>
+            <p id="cart-total-price" class="text-lg font-black text-[#8f3d35]">0,00 €</p>
+          </div>
+          <button onclick="checkoutCart()" class="w-full bg-[#243029] hover:bg-[#34453b] text-white py-3.5 rounded-xl font-bold canva-button text-sm tracking-wide">Passer la commande</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-xs" onclick="toggleModal('login-modal')"></div>
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl z-10 relative border border-stone-100">
+      <button type="button" onclick="toggleModal('login-modal')" class="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+
+      <form id="form-connexion" class="space-y-3">
+        <h2 class="text-lg font-bold text-stone-900 mb-4">Connexion</h2>
+        <input type="email" id="connexion-email" required placeholder="Adresse e-mail" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm">
+        <input type="password" id="connexion-password" required placeholder="Mot de passe" class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm">
+        <button type="submit" class="w-full bg-[#243029] hover:bg-[#8f3d35] text-white py-2.5 rounded-xl text-sm font-bold canva-button">Se connecter</button>
+      </form>
     </div>
   </div>
 
   <script>
-    const API_URL = 'https://viteetgourmand-maj-production.up.railway.app/api';
+    function echapperHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      window.lucide.createIcons();
-      chargerLocations();
-      fetch(`${API_URL}/tracking/visite`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ page: 'location.html' })
-      }).catch(() => {});
+    const API_URL = 'https://viteetgourmand-maj-production.up.railway.app/api';
+    let tousLesMateriels = [];
+    let cart = [];
+
+    window.addEventListener('DOMContentLoaded', function() {
+      if (window.lucide) window.lucide.createIcons();
+      chargerMateriel();
+      ecouterFiltres();
     });
 
-    async function chargerLocations() {
-      const container = document.getElementById('location-container');
-      try {
-        const res = await fetch(`${API_URL}/locations`);
-        const data = await res.json();
-        const locations = data.locations || [];
+    function toggleDrawer(id) { document.getElementById(id).classList.toggle('hidden'); }
+    function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
 
-        if (locations.length === 0) {
-          container.innerHTML = `<p class="col-span-3 text-center text-stone-400 text-sm">Aucun matériel disponible pour le moment.</p>`;
-          return;
+    async function chargerMateriel() {
+      const grid = document.getElementById('location-grid');
+      try {
+        const res = await fetch(API_URL + '/materiel');
+        const data = await res.json();
+        tousLesMateriels = data.materiels || data || [];
+
+        afficherMateriel(tousLesMateriels);
+      } catch (error) {
+        console.error('Erreur chargement matériel :', error);
+        grid.innerHTML = '<p class="col-span-full text-center text-red-500 text-sm">Impossible de charger le matériel de location.</p>';
+      }
+    }
+
+    function afficherMateriel(items) {
+      const grid = document.getElementById('location-grid');
+
+      if (!items || items.length === 0) {
+        grid.innerHTML = '<p class="col-span-full text-center text-stone-400 text-sm py-12">Aucun matériel ne correspond à vos critères.</p>';
+        return;
+      }
+
+      grid.innerHTML = items.map(function(item) {
+        const imgUrl = item.image_url || 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop';
+        const prix = Number(item.prix_jour || item.prix || 0);
+
+        return '<div class="bg-white rounded-2xl p-6 shadow-sm border border-stone-200/60 flex flex-col justify-between hover:shadow-md transition">' +
+          '<div>' +
+            '<img src="' + imgUrl + '" alt="' + echapperHTML(item.nom) + '" class="rounded-xl w-full h-52 object-cover mb-4">' +
+            (item.type ? '<span class="bg-amber-50 text-amber-800 font-bold text-[10px] uppercase px-2.5 py-1 rounded-full mb-2 inline-block">' + echapperHTML(item.type) + '</span>' : '') +
+            '<h3 class="text-xl font-bold text-stone-900 mb-2">' + echapperHTML(item.nom) + '</h3>' +
+            '<p class="text-sm text-stone-500 leading-relaxed mb-4">' + echapperHTML(item.description || '') + '</p>' +
+          '</div>' +
+          '<div class="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">' +
+            '<div>' +
+              '<span class="text-xs text-stone-400 block">Tarif / Jour</span>' +
+              '<span class="text-xl font-black text-stone-900">' + prix.toFixed(2).replace('.', ',') + ' €</span>' +
+            '</div>' +
+            '<button type="button" data-id="' + item.id + '" data-nom="' + echapperHTML(item.nom) + '" data-prix="' + prix + '" onclick="addToCartFromElement(this)" class="bg-[#243029] hover:bg-[#8f3d35] text-white px-4 py-2.5 rounded-xl text-xs font-bold canva-button flex items-center gap-1.5">' +
+              '<i data-lucide="plus" class="w-4 h-4"></i> Réserver' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function ecouterFiltres() {
+      const searchInput = document.getElementById('search-input');
+      const filterType = document.getElementById('filter-type');
+      const sortPrix = document.getElementById('sort-prix');
+
+      function appliquerFiltres() {
+        let resultats = [...tousLesMateriels];
+        const recherche = searchInput.value.toLowerCase().trim();
+        const type = filterType.value;
+        const tri = sortPrix.value;
+
+        if (recherche) {
+          resultats = resultats.filter(function(item) {
+            return (item.nom || '').toLowerCase().includes(recherche) || 
+                   (item.description || '').toLowerCase().includes(recherche);
+          });
         }
 
-        container.innerHTML = locations.map(l => `
-          <div class="bg-white rounded-2xl shadow-sm border border-stone-200/60 overflow-hidden flex flex-col">
-            <img src="${l.image_url || 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=600&auto=format&fit=crop'}" alt="${l.titre}" class="w-full h-44 object-cover">
-            <div class="p-5 flex flex-col flex-1">
-              <h3 class="text-lg font-bold text-stone-900">${l.titre}</h3>
-              <p class="text-sm text-stone-500 mt-1 flex-1">${l.description.slice(0, 90)}${l.description.length > 90 ? '…' : ''}</p>
-              <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-sm">
-                <span class="text-stone-500">Caution : <strong class="text-stone-900">${Number(l.caution).toFixed(2)} €</strong></span>
-                <span class="text-lg font-black text-stone-900">${Number(l.prix_location).toFixed(2).replace('.', ',')} €<span class="text-xs font-normal text-stone-400">/jour</span></span>
-              </div>
-              <button onclick="voirDetail(${l.idlocation})" class="mt-4 w-full bg-[#243029] hover:bg-[#8f3d35] text-white py-2.5 rounded-xl text-xs font-bold transition">Voir le détail</button>
-            </div>
-          </div>
-        `).join('');
-      } catch (error) {
-        console.error(error);
-        container.innerHTML = `<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger le matériel. Le serveur est-il démarré ?</p>`;
+        if (type) {
+          resultats = resultats.filter(function(item) { return item.type === type; });
+        }
+
+        if (tri === 'asc') {
+          resultats.sort(function(a, b) { return Number(a.prix_jour || a.prix || 0) - Number(b.prix_jour || b.prix || 0); });
+        } else if (tri === 'desc') {
+          resultats.sort(function(a, b) { return Number(b.prix_jour || b.prix || 0) - Number(a.prix_jour || a.prix || 0); });
+        }
+
+        afficherMateriel(resultats);
       }
+
+      searchInput.addEventListener('input', appliquerFiltres);
+      filterType.addEventListener('change', appliquerFiltres);
+      sortPrix.addEventListener('change', appliquerFiltres);
     }
 
-    async function voirDetail(idlocation) {
-      const modal = document.getElementById('detail-modal');
-      const content = document.getElementById('detail-content');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      content.innerHTML = `<p class="text-center text-stone-400 text-sm">Chargement...</p>`;
-
-      try {
-        const res = await fetch(`${API_URL}/locations/${idlocation}`);
-        const data = await res.json();
-        const l = data.location;
-
-        content.innerHTML = `
-          <h2 class="text-2xl font-serif font-bold text-stone-900 mb-3">${l.titre}</h2>
-          <img src="${l.image_url || 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=600&auto=format&fit=crop'}" alt="${l.titre}" class="w-full h-48 object-cover rounded-xl mb-4">
-          <p class="text-sm text-stone-600 mb-4">${l.description}</p>
-
-          <div class="grid grid-cols-2 gap-4 text-sm mb-4">
-            <p><strong>Prix / jour :</strong> ${Number(l.prix_location).toFixed(2).replace('.', ',')} €</p>
-            <p><strong>Caution :</strong> ${Number(l.caution).toFixed(2).replace('.', ',')} €</p>
-            <p><strong>Stock disponible :</strong> ${l.stock_disponible}</p>
-          </div>
-
-          ${l.conditions_recuperation ? `<div class="mb-3 bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800"><strong>Récupération :</strong> ${l.conditions_recuperation}</div>` : ''}
-          ${l.conditions_remise ? `<div class="mb-4 bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800"><strong>Remise :</strong> ${l.conditions_remise}</div>` : ''}
-
-          <div class="pt-4 border-t border-stone-100 space-y-3">
-            <p class="text-xs font-bold uppercase text-stone-500">Réservation</p>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label for="resa-date-pret" class="block text-[10px] font-bold uppercase text-stone-400 mb-1">Date de prêt</label>
-                <input type="date" id="resa-date-pret" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#8f3d35]">
-              </div>
-              <div>
-                <label for="resa-date-retour" class="block text-[10px] font-bold uppercase text-stone-400 mb-1">Date de retour</label>
-                <input type="date" id="resa-date-retour" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#8f3d35]">
-              </div>
-            </div>
-            <div>
-              <label for="resa-quantite" class="block text-[10px] font-bold uppercase text-stone-400 mb-1">Quantité souhaitée</label>
-              <input type="number" id="resa-quantite" min="1" value="1" max="${l.stock_disponible}" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#8f3d35]">
-            </div>
-          </div>
-
-          <div id="resa-message" class="hidden mt-4 text-xs font-semibold p-3 rounded-lg" role="status" aria-live="polite"></div>
-          <button onclick='reserverMateriel(${l.idlocation}, ${l.stock_disponible})' class="mt-5 w-full bg-[#243029] hover:bg-[#8f3d35] text-white py-3 rounded-xl text-sm font-bold transition" ${l.stock_disponible <= 0 ? 'disabled' : ''}>
-            ${l.stock_disponible <= 0 ? 'Stock épuisé' : 'Réserver ce matériel'}
-          </button>
-        `;
-      } catch (error) {
-        content.innerHTML = `<p class="text-center text-red-500 text-sm">Impossible de charger le détail.</p>`;
+    function addToCartFromElement(btn) {
+      const id = Number(btn.dataset.id);
+      const nom = btn.dataset.nom;
+      const prix = Number(btn.dataset.prix);
+      
+      const existant = cart.find(function(item) { return item.id === id; });
+      if (existant) {
+        existant.quantite += 1;
+      } else {
+        cart.push({ id: id, nom: nom, prix_unitaire: prix, quantite: 1 });
       }
+
+      renderCart();
+      document.getElementById('cart-drawer').classList.remove('hidden');
     }
 
-    function fermerDetail() {
-      const modal = document.getElementById('detail-modal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
+    function renderCart() {
+      const listContainer = document.getElementById('cart-items-list');
+      const countBadge = document.getElementById('global-cart-count');
+      const totalDisplay = document.getElementById('cart-total-price');
 
-    async function reserverMateriel(idlocation, stock) {
-      const msgDiv = document.getElementById('resa-message');
-      const token = localStorage.getItem('token');
-
-      if (!token) {
-        msgDiv.className = "mt-4 text-xs font-semibold p-3 rounded-lg bg-amber-50 text-amber-700 border border-amber-200";
-        msgDiv.textContent = "Connectez-vous depuis la page d'accueil pour réserver.";
-        msgDiv.classList.remove('hidden');
-        return;
-      }
-      if (stock <= 0) return;
-
-      const datePret = document.getElementById('resa-date-pret').value;
-      const dateRetour = document.getElementById('resa-date-retour').value;
-      const quantite = Number(document.getElementById('resa-quantite').value);
-
-      if (!datePret || !dateRetour) {
-        msgDiv.className = "mt-4 text-xs font-semibold p-3 rounded-lg bg-red-50 text-red-700 border border-red-200";
-        msgDiv.textContent = "Merci de renseigner les dates de prêt et de retour.";
-        msgDiv.classList.remove('hidden');
+      if (cart.length === 0) {
+        listContainer.innerHTML = '<p class="text-stone-400 text-center py-8 text-sm">Votre panier est vide.</p>';
+        countBadge.textContent = "0";
+        totalDisplay.textContent = "0,00 €";
         return;
       }
 
-      try {
-        const res = await fetch(`${API_URL}/locations/reserver`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ idlocation, quantite, date_pret: datePret, date_retour: dateRetour })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Erreur lors de la réservation.");
+      let total = 0, totalItems = 0;
+      listContainer.innerHTML = "";
 
-        msgDiv.className = "mt-4 text-xs font-semibold p-3 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200";
-        msgDiv.textContent = `Réservation #${data.idcommande} confirmée — Total : ${data.total.toFixed(2)} € + caution ${data.caution.toFixed(2)} € (${data.nombre_jours} jour(s))`;
-        msgDiv.classList.remove('hidden');
-      } catch (error) {
-        msgDiv.className = "mt-4 text-xs font-semibold p-3 rounded-lg bg-red-50 text-red-700 border border-red-200";
-        msgDiv.textContent = error.message;
-        msgDiv.classList.remove('hidden');
-      }
+      cart.forEach(function(item) {
+        total += item.prix_unitaire * item.quantite;
+        totalItems += item.quantite;
+        listContainer.innerHTML += '<div class="flex items-center justify-between border-b border-stone-100 pb-3">' +
+          '<div>' +
+            '<p class="font-bold text-xs text-stone-900">' + echapperHTML(item.nom) + '</p>' +
+            '<p class="text-[11px] text-stone-500">' + item.prix_unitaire.toFixed(2) + ' € / jour</p>' +
+          '</div>' +
+          '<span class="text-xs font-bold bg-stone-100 px-2 py-1 rounded">x' + item.quantite + '</span>' +
+        '</div>';
+      });
+
+      countBadge.textContent = totalItems;
+      totalDisplay.textContent = total.toFixed(2).replace('.', ',') + ' €';
     }
   </script>
+
 </body>
 </html>

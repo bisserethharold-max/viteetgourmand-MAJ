@@ -8,8 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-
-  
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     html, body, button, input, textarea, select {
@@ -22,7 +20,6 @@
 </head>
 <body class="bg-stone-50/50 text-stone-800 antialiased pt-20">
 
- 
   <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
       <a href="#" class="font-serif text-2xl font-bold tracking-tight text-[#243029]">Vite et Gourmand</a>
@@ -56,7 +53,6 @@
       </div>
     </div>
 
-   
     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-stone-100 px-4 py-4 space-y-2 shadow-lg">
       <a href="#a-propos" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">À Propos</a>
       <a href="#carte" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">La Carte</a>
@@ -66,7 +62,6 @@
       <a href="#contact" class="block font-medium text-stone-700 py-2.5 px-3 hover:bg-stone-50 rounded-lg">Contact & Devis</a>
     </div>
   </nav>
-
 
   <div id="business-dashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
     <div class="bg-stone-900 text-white p-6 rounded-2xl shadow-xl border border-stone-800">
@@ -96,7 +91,6 @@
     </div>
   </div>
 
- 
   <header class="relative bg-cover bg-center bg-no-repeat text-white overflow-hidden py-32 px-4 sm:px-6 lg:px-8" style="background-image: url('https://images.unsplash.com/photo-1577308856961-8e9ec50d0c67?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
     <div class="absolute inset-0 bg-black/50 z-0"></div>
     <div class="max-w-5xl mx-auto text-center relative z-10">
@@ -108,7 +102,6 @@
     </div>
   </header>
 
- 
   <section id="a-propos" class="py-20 bg-[#fff4dd]">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="bloc-texte">
@@ -123,7 +116,6 @@
     </div>
   </section>
 
-  
   <section id="carte" class="py-20 bg-stone-100/60">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
       <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Prestations & Menus</span>
@@ -136,7 +128,6 @@
     </div>
   </section>
 
-  
   <section id="galerie" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
       <span class="text-[#8f3d35] font-bold text-xs uppercase tracking-wider">Immersion Visuelle</span>
@@ -149,7 +140,6 @@
     </div>
   </section>
 
-  
   <section id="avis" class="py-20 bg-stone-100/60">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
@@ -188,7 +178,6 @@
     </div>
   </section>
 
-
   <section id="contact" class="py-20 relative bg-[#fff4dd]">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
@@ -221,7 +210,6 @@
     </div>
   </section>
 
-  
   <footer class="bg-white text-stone-700 border-t border-stone-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8 text-sm">
       <div>
@@ -246,7 +234,6 @@
     </div>
   </footer>
 
-
   <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none overflow-hidden hidden" role="dialog" aria-modal="true">
     <div class="absolute inset-0 bg-stone-900/60 opacity-100 transition-opacity pointer-events-auto" onclick="toggleDrawer('cart-drawer')"></div>
     <div class="fixed inset-y-0 right-0 max-w-full flex pointer-events-auto">
@@ -270,14 +257,12 @@
     </div>
   </div>
 
-
   <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4" role="dialog" aria-modal="true" aria-labelledby="titre-login-modal">
     <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-xs" onclick="toggleModal('login-modal')"></div>
     <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl z-10 relative border border-stone-100">
       <button type="button" onclick="toggleModal('login-modal')" aria-label="Fermer la fenêtre de connexion" class="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600"><i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i></button>
       <h2 id="titre-login-modal" class="sr-only">Connexion ou inscription</h2>
 
-      
       <div class="flex gap-2 mb-5 bg-stone-100 p-1 rounded-xl">
         <button id="tab-connexion" onclick="switchAuthTab('connexion')" class="flex-1 text-xs font-bold py-2 rounded-lg transition bg-white shadow-sm">Connexion</button>
         <button id="tab-inscription" onclick="switchAuthTab('inscription')" class="flex-1 text-xs font-bold py-2 rounded-lg transition text-stone-500">Inscription</button>
@@ -315,18 +300,28 @@
   </div>
 
   <script>
+    function echapperHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     const API_URL = 'https://viteetgourmand-maj-production.up.railway.app/api';
 
-    window.addEventListener('DOMContentLoaded', () => {
-      window.lucide.createIcons();
+    window.addEventListener('DOMContentLoaded', function() {
+      if (window.lucide) window.lucide.createIcons();
       chargerMenusCarte();
       verifierSessionExistante();
       chargerAvis();
-      fetch(`${API_URL}/tracking/visite`, {
+      fetch(API_URL + '/tracking/visite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ page: 'index.html' })
-      }).catch(() => {});
+      }).catch(function() {});
     });
 
     let cart = [];
@@ -334,67 +329,79 @@
     function toggleDrawer(id) { document.getElementById(id).classList.toggle('hidden'); }
     function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
 
-    document.getElementById('burger-btn').addEventListener('click', () => {
+    document.getElementById('burger-btn').addEventListener('click', function() {
       document.getElementById('mobile-menu').classList.toggle('hidden');
     });
-    document.querySelectorAll('#mobile-menu a').forEach(link => {
-      link.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
+    document.querySelectorAll('#mobile-menu a').forEach(function(link) {
+      link.addEventListener('click', function() { document.getElementById('mobile-menu').classList.add('hidden'); });
     });
 
     async function chargerMenusCarte() {
       const container = document.getElementById('menus-container');
       try {
-        const res = await fetch(`${API_URL}/menus`);
+        const res = await fetch(API_URL + '/menus');
         const data = await res.json();
         const menus = data.menus || [];
 
         if (menus.length === 0) {
-          container.innerHTML = `<p class="col-span-3 text-center text-stone-400 text-sm">Aucun menu disponible pour le moment.</p>`;
+          container.innerHTML = '<p class="col-span-3 text-center text-stone-400 text-sm">Aucun menu disponible pour le moment.</p>';
           return;
         }
 
-        container.innerHTML = menus.slice(0, 6).map(m => `
-          <div class="bg-white rounded-2xl p-5 shadow-sm border border-stone-200/60 flex flex-col justify-between">
-            <div>
-              <img src="${m.image_apercu || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop'}" alt="${m.titre}" class="rounded-xl w-full h-48 object-cover mb-4">
-              <span class="bg-red-50 text-[#8f3d35] font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">${m.theme}</span>
-              <h3 class="text-lg font-bold mt-2 text-stone-900">${m.titre}</h3>
-              <p class="text-sm text-stone-500 mt-1">${(m.description || '').slice(0, 90)}</p>
-              <p class="text-xs text-stone-400 mt-1">À partir de ${m.nombre_personnes_min} personnes</p>
-            </div>
-            <div class="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
-              <span class="text-lg font-black text-stone-900">${Number(m.prix_base).toFixed(2).replace('.', ',')} €</span>
-              <button onclick='addToCart(${m.idmenu}, ${JSON.stringify(m.titre)}, ${m.prix_base})' ${m.stock_disponible <= 0 ? 'disabled' : ''} class="bg-[#243029] hover:bg-[#8f3d35] text-white px-4 py-2 rounded-xl text-xs font-bold canva-button flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i> ${m.stock_disponible <= 0 ? 'Épuisé' : 'Ajouter'}
-              </button>
-            </div>
-          </div>
-        `).join('');
-        window.lucide.createIcons();
+        container.innerHTML = menus.slice(0, 6).map(function(m) {
+          const imgUrl = m.image_apercu || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop';
+          const stockEpuise = m.stock_disponible <= 0;
+          const btnText = stockEpuise ? 'Épuisé' : 'Ajouter';
+          const btnDisabled = stockEpuise ? 'disabled' : '';
+
+          return '<div class="bg-white rounded-2xl p-5 shadow-sm border border-stone-200/60 flex flex-col justify-between">' +
+            '<div>' +
+              '<img src="' + imgUrl + '" alt="' + echapperHTML(m.titre) + '" class="rounded-xl w-full h-48 object-cover mb-4">' +
+              '<span class="bg-red-50 text-[#8f3d35] font-bold text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">' + echapperHTML(m.theme) + '</span>' +
+              '<h3 class="text-lg font-bold mt-2 text-stone-900">' + echapperHTML(m.titre) + '</h3>' +
+              '<p class="text-sm text-stone-500 mt-1">' + echapperHTML((m.description || '').slice(0, 90)) + '</p>' +
+              '<p class="text-xs text-stone-400 mt-1">À partir de ' + m.nombre_personnes_min + ' personnes</p>' +
+            '</div>' +
+            '<div class="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">' +
+              '<span class="text-lg font-black text-stone-900">' + Number(m.prix_base).toFixed(2).replace('.', ',') + ' €</span>' +
+              '<button type="button" data-id="' + m.idmenu + '" data-titre="' + echapperHTML(m.titre) + '" data-prix="' + m.prix_base + '" onclick="addToCartFromElement(this)" ' + btnDisabled + ' class="bg-[#243029] hover:bg-[#8f3d35] text-white px-4 py-2 rounded-xl text-xs font-bold canva-button flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed">' +
+                '<i data-lucide="plus" class="w-3.5 h-3.5"></i> ' + btnText +
+              '</button>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        if (window.lucide) window.lucide.createIcons();
       } catch (error) {
         console.error('Erreur chargement menus :', error);
-        container.innerHTML = `<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger la carte. Le serveur backend est-il démarré ?</p>`;
+        container.innerHTML = '<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger la carte. Le serveur backend est-il démarré ?</p>';
       }
     }
 
+    function addToCartFromElement(btn) {
+      const id = Number(btn.dataset.id);
+      const titre = btn.dataset.titre;
+      const prix = Number(btn.dataset.prix);
+      addToCart(id, titre, prix);
+    }
 
     function addToCart(idmenu, nom, prix) {
-      const existant = cart.find(item => item.idmenu === idmenu);
+      const existant = cart.find(function(item) { return item.idmenu === idmenu; });
       if (existant) {
         existant.quantite += 1;
       } else {
-        cart.push({ idmenu, nom, prix_unitaire: Number(prix), quantite: 1 });
+        cart.push({ idmenu: idmenu, nom: nom, prix_unitaire: Number(prix), quantite: 1 });
       }
       renderCart();
       document.getElementById('cart-drawer').classList.remove('hidden');
     }
 
     function changeQuantity(idmenu, change) {
-      const item = cart.find(i => i.idmenu === idmenu);
+      const item = cart.find(function(i) { return i.idmenu === idmenu; });
       if (item) {
         item.quantite += change;
         if (item.quantite <= 0) {
-          cart = cart.filter(i => i.idmenu !== idmenu);
+          cart = cart.filter(function(i) { return i.idmenu !== idmenu; });
         }
       }
       renderCart();
@@ -406,7 +413,7 @@
       const totalDisplay = document.getElementById('cart-total-price');
 
       if (cart.length === 0) {
-        listContainer.innerHTML = `<p class="text-stone-400 text-center py-8 text-sm">Sélectionnez des formules sur la carte pour les ajouter.</p>`;
+        listContainer.innerHTML = '<p class="text-stone-400 text-center py-8 text-sm">Sélectionnez des formules sur la carte pour les ajouter.</p>';
         countBadge.textContent = "0";
         totalDisplay.textContent = "0,00 €";
         return;
@@ -415,26 +422,24 @@
       let total = 0, totalItems = 0;
       listContainer.innerHTML = "";
 
-      cart.forEach(item => {
+      cart.forEach(function(item) {
         total += item.prix_unitaire * item.quantite;
         totalItems += item.quantite;
-        listContainer.innerHTML += `
-          <div class="flex items-center justify-between border-b border-stone-100 pb-3">
-            <div class="max-w-[70%]">
-              <p class="font-bold text-xs text-stone-900">${item.nom}</p>
-              <p class="text-[11px] text-stone-500">${item.prix_unitaire.toFixed(2)} € / unité</p>
-            </div>
-            <div class="flex items-center gap-2 bg-stone-100 p-1.5 rounded-lg">
-              <button onclick="changeQuantity(${item.idmenu}, -1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">-</button>
-              <span class="text-xs font-bold px-1 w-4 text-center">${item.quantite}</span>
-              <button onclick="changeQuantity(${item.idmenu}, 1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">+</button>
-            </div>
-          </div>
-        `;
+        listContainer.innerHTML += '<div class="flex items-center justify-between border-b border-stone-100 pb-3">' +
+          '<div class="max-w-[70%]">' +
+            '<p class="font-bold text-xs text-stone-900">' + echapperHTML(item.nom) + '</p>' +
+            '<p class="text-[11px] text-stone-500">' + item.prix_unitaire.toFixed(2) + ' € / unité</p>' +
+          '</div>' +
+          '<div class="flex items-center gap-2 bg-stone-100 p-1.5 rounded-lg">' +
+            '<button onclick="changeQuantity(' + item.idmenu + ', -1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">-</button>' +
+            '<span class="text-xs font-bold px-1 w-4 text-center">' + item.quantite + '</span>' +
+            '<button onclick="changeQuantity(' + item.idmenu + ', 1)" class="w-5 h-5 bg-white rounded flex items-center justify-center text-xs font-bold hover:bg-stone-200">+</button>' +
+          '</div>' +
+        '</div>';
       });
 
       countBadge.textContent = totalItems;
-      totalDisplay.textContent = `${total.toFixed(2).replace('.', ',')} €`;
+      totalDisplay.textContent = total.toFixed(2).replace('.', ',') + ' €';
     }
 
     async function checkoutCart() {
@@ -455,28 +460,26 @@
         return;
       }
 
-      const total = cart.reduce((sum, item) => sum + item.prix_unitaire * item.quantite, 0);
-      const menus = cart.map(item => ({
-        idmenu: item.idmenu,
-        quantite: item.quantite,
-        prix_unitaire: item.prix_unitaire
-      }));
+      const total = cart.reduce(function(sum, item) { return sum + item.prix_unitaire * item.quantite; }, 0);
+      const menus = cart.map(function(item) {
+        return { idmenu: item.idmenu, quantite: item.quantite, prix_unitaire: item.prix_unitaire };
+      });
 
       try {
-        const res = await fetch(`${API_URL}/commandes`, {
+        const res = await fetch(API_URL + '/commandes', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': 'Bearer ' + token
           },
-          body: JSON.stringify({ total, menus })
+          body: JSON.stringify({ total: total, menus: menus })
         });
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.error || "Erreur lors de la commande.");
 
         msgDiv.className = "text-xs font-semibold p-3 rounded-lg mb-3 bg-emerald-50 text-emerald-700 border border-emerald-200";
-        msgDiv.textContent = `Commande #${data.idcommande} enregistrée avec succès !`;
+        msgDiv.textContent = "Commande #" + data.idcommande + " enregistrée avec succès !";
         msgDiv.classList.remove('hidden');
         cart = [];
         renderCart();
@@ -488,7 +491,6 @@
       }
     }
 
-  
     function switchAuthTab(tab) {
       const tabConnexion = document.getElementById('tab-connexion');
       const tabInscription = document.getElementById('tab-inscription');
@@ -516,10 +518,10 @@
       const msgDiv = document.getElementById('auth-message');
 
       try {
-        const res = await fetch(`${API_URL}/auth/connexion`, {
+        const res = await fetch(API_URL + '/auth/connexion', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email: email, password: password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Erreur de connexion.");
@@ -547,10 +549,10 @@
       const msgDiv = document.getElementById('auth-message');
 
       try {
-        const res = await fetch(`${API_URL}/auth/inscription`, {
+        const res = await fetch(API_URL + '/auth/inscription', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nom, prenom, telephone, adresse, email, password })
+          body: JSON.stringify({ nom: nom, prenom: prenom, telephone: telephone, adresse: adresse, email: email, password: password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Erreur lors de l'inscription.");
@@ -570,27 +572,27 @@
     async function chargerAvis() {
       const container = document.getElementById('avis-container');
       try {
-        const res = await fetch(`${API_URL}/avis`);
+        const res = await fetch(API_URL + '/avis');
         const data = await res.json();
         const avis = data.avis || [];
 
         if (avis.length === 0) {
-          container.innerHTML = `<p class="col-span-3 text-center text-stone-400 text-sm">Aucun avis publié pour le moment.</p>`;
+          container.innerHTML = '<p class="col-span-3 text-center text-stone-400 text-sm">Aucun avis publié pour le moment.</p>';
         } else {
-          container.innerHTML = avis.map(a => `
-            <div class="bg-white rounded-2xl border border-stone-200 p-5">
-              <div class="text-amber-500 text-sm mb-2">${'⭐'.repeat(a.note)}</div>
-              <p class="text-sm text-stone-600 italic mb-3">"${a.commentaire}"</p>
-              <p class="text-xs font-bold text-stone-900">${a.prenom} ${a.nom}</p>
-            </div>
-          `).join('');
+          container.innerHTML = avis.map(function(a) {
+            return '<div class="bg-white rounded-2xl border border-stone-200 p-5">' +
+              '<div class="text-amber-500 text-sm mb-2">' + '⭐'.repeat(a.note) + '</div>' +
+              '<p class="text-sm text-stone-600 italic mb-3">"' + echapperHTML(a.commentaire) + '"</p>' +
+              '<p class="text-xs font-bold text-stone-900">' + echapperHTML(a.prenom) + ' ' + echapperHTML(a.nom) + '</p>' +
+            '</div>';
+          }).join('');
         }
 
         const token = localStorage.getItem('token');
         document.getElementById('zone-depot-avis').classList.toggle('hidden', !token);
         document.getElementById('avis-connexion-requise').classList.toggle('hidden', !!token);
       } catch (error) {
-        container.innerHTML = `<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger les avis.</p>`;
+        container.innerHTML = '<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger les avis.</p>';
       }
     }
 
@@ -602,13 +604,13 @@
       const commentaire = document.getElementById('avis-commentaire').value;
 
       try {
-        const res = await fetch(`${API_URL}/avis`, {
+        const res = await fetch(API_URL + '/avis', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': 'Bearer ' + token
           },
-          body: JSON.stringify({ note, commentaire })
+          body: JSON.stringify({ note: note, commentaire: commentaire })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Erreur lors de l'envoi de l'avis.");
@@ -626,12 +628,11 @@
 
     function afficherSessionActive(client) {
       const profileZone = document.getElementById('user-profile-zone');
-      profileZone.innerHTML = `
-        <div class="flex items-center gap-2 bg-stone-100 border border-stone-200 rounded-full pl-3 pr-1 py-1 shadow-xs">
-          <span class="text-xs font-semibold text-stone-700">Bonjour, <strong class="text-stone-900">${client.nom}</strong></span>
-          <button type="button" onclick="toggleDashboard()" class="bg-[#243029] text-white text-[10px] uppercase font-black px-3 py-1.5 rounded-full hover:bg-stone-800 transition">Mon espace</button>
-        </div>
-      `;
+      profileZone.innerHTML = '<div class="flex items-center gap-2 bg-stone-100 border border-stone-200 rounded-full pl-3 pr-1 py-1 shadow-xs">' +
+        '<span class="text-xs font-semibold text-stone-700">Bonjour, <strong class="text-stone-900">' + echapperHTML(client.nom) + '</strong></span>' +
+        '<button type="button" onclick="toggleDashboard()" class="bg-[#243029] text-white text-[10px] uppercase font-black px-3 py-1.5 rounded-full hover:bg-stone-800 transition">Mon espace</button>' +
+      '</div>';
+
       document.getElementById('dashboard-user-name').textContent = client.nom;
       document.getElementById('form-name').value = client.nom;
       document.getElementById('form-email').value = client.email;
@@ -657,7 +658,7 @@
 
       chargerMesCommandes();
       chargerAvis();
-      window.lucide.createIcons();
+      if (window.lucide) window.lucide.createIcons();
     }
 
     async function chargerMesCommandes() {
@@ -665,58 +666,52 @@
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      container.innerHTML = `<p class="text-stone-500 text-xs">Chargement...</p>`;
+      container.innerHTML = '<p class="text-stone-500 text-xs">Chargement...</p>';
       try {
-        const res = await fetch(`${API_URL}/commandes`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const res = await fetch(API_URL + '/commandes', {
+          headers: { 'Authorization': 'Bearer ' + token }
         });
         const data = await res.json();
         const commandes = data.commandes || [];
 
         if (commandes.length === 0) {
-          container.innerHTML = `<p class="text-stone-500 text-xs">Vous n'avez pas encore passé de commande.</p>`;
+          container.innerHTML = '<p class="text-stone-500 text-xs">Vous n\'avez pas encore passé de commande.</p>';
           return;
         }
 
-        container.innerHTML = commandes.map(c => `
-          <div class="bg-stone-800/60 border border-stone-700 rounded-xl p-3">
-            <div class="flex justify-between items-center text-xs">
-              <span class="font-bold text-white">Commande #${c.idcommande}</span>
-              <span class="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-semibold">${c.statut}</span>
-            </div>
-            <p class="text-stone-400 text-[11px] mt-1">${new Date(c.date_commande).toLocaleDateString('fr-FR')} • ${Number(c.total).toFixed(2)} €</p>
-            <ul class="text-[11px] text-stone-300 mt-1 list-disc list-inside">
-              ${c.details.map(d => `<li>${d.nom_produit || d.nom_menu || 'Article'} × ${d.quantite}</li>`).join('')}
-            </ul>
-          </div>
-        `).join('');
+        container.innerHTML = commandes.map(function(c) {
+          const detailsHtml = (c.details || []).map(function(d) {
+            const nom = echapperHTML(d.nom_produit || d.nom_menu || 'Article');
+            return '<li>' + nom + ' × ' + d.quantite + '</li>';
+          }).join('');
+
+          return '<div class="bg-stone-800/60 border border-stone-700 rounded-xl p-3">' +
+            '<div class="flex justify-between items-center text-xs">' +
+              '<span class="font-bold text-white">Commande #' + c.idcommande + '</span>' +
+              '<span class="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-semibold">' + echapperHTML(c.statut) + '</span>' +
+            '</div>' +
+            '<p class="text-stone-400 text-[11px] mt-1">' + new Date(c.date_commande).toLocaleDateString('fr-FR') + ' • ' + Number(c.total).toFixed(2) + ' €</p>' +
+            '<ul class="text-[11px] text-stone-300 mt-1 list-disc list-inside">' + detailsHtml + '</ul>' +
+          '</div>';
+        }).join('');
       } catch (error) {
-        container.innerHTML = `<p class="text-red-400 text-xs">Impossible de charger vos commandes.</p>`;
+        container.innerHTML = '<p class="text-red-400 text-xs">Impossible de charger vos commandes.</p>';
       }
     }
 
     function toggleDashboard() {
-      console.log('toggleDashboard() appelé');
       const dashboard = document.getElementById('business-dashboard');
-      const estCacheActuellement = dashboard.classList.contains('hidden');
-      console.log('État avant clic : caché =', estCacheActuellement);
-      if (estCacheActuellement) {
-        dashboard.classList.remove('hidden');
-      } else {
-        dashboard.classList.add('hidden');
-      }
+      dashboard.classList.toggle('hidden');
     }
 
     function logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('client');
       document.getElementById('business-dashboard').classList.add('hidden');
-      document.getElementById('user-profile-zone').innerHTML = `
-        <button onclick="toggleModal('login-modal')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">
-          <i data-lucide="user" class="w-4 h-4"></i> Connexion
-        </button>
-      `;
-      window.lucide.createIcons();
+      document.getElementById('user-profile-zone').innerHTML = '<button onclick="toggleModal(\'login-modal\')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">' +
+        '<i data-lucide="user" class="w-4 h-4"></i> Connexion' +
+      '</button>';
+      if (window.lucide) window.lucide.createIcons();
       chargerAvis();
     }
 
@@ -728,27 +723,27 @@
       }
     }
 
-document.getElementById('request-form').addEventListener('submit', async function(e) {
-  e.preventDefault();
+    document.getElementById('request-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
 
-  const titre = document.getElementById('form-name').value;
-  const description = document.getElementById('request-details').value;
-  const email = document.getElementById('form-email').value;
+      const titre = document.getElementById('form-name').value;
+      const description = document.getElementById('request-details').value;
+      const email = document.getElementById('form-email').value;
 
-  try {
-    const res = await fetch(`${API_URL}/contact`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ titre, description, email })
+      try {
+        const res = await fetch(API_URL + '/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ titre: titre, description: description, email: email })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        this.reset();
+      } catch (error) {
+        console.error(error);
+      }
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-
-    this.reset();
-  } catch (error) {
-    console.error(error);
-  }
-});
   </script>
 
 </body>

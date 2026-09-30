@@ -1,0 +1,10 @@
+# Aide-mémoire commandes
+
+# Synchroniser le front vers public
+npm run copy:front
+
+# Lancer le serveur dev
+npm run dev
+
+# Compiler le CSS
+npm run build:css
