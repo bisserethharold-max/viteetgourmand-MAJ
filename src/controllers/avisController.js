@@ -58,21 +58,22 @@ export const creerAvis = async (req, res) => {
   const idclient = req.user.idclient;
   const { note, commentaire } = req.body;
 
-  if (!note || !commentaire) {
-    return res.status(400).json({ error: "La note et le commentaire sont obligatoires." });
-  }
-  
-  const noteNumerique = Number(note);
-  if (isNaN(noteNumerique) || noteNumerique < 1 || noteNumerique > 5) {
-    return res.status(400).json({ error: "La note doit être un nombre compris entre 1 et 5." });
+  const noteNum = Number(note);
+  if (note === undefined || note === null || !Number.isInteger(noteNum) || noteNum < 1 || noteNum > 5) {
+    return res.status(400).json({ error: "La note doit être un nombre entier compris entre 1 et 5." });
   }
 
-  const commentaireSecurise = echapperHtml(commentaire.trim());
+  const commentaireNettoye = (commentaire || '').trim();
+  if (commentaireNettoye.length === 0) {
+    return res.status(400).json({ error: "Le commentaire est obligatoire." });
+  }
+
+  const commentaireSecurise = echapperHtml(commentaireNettoye);
 
   try {
     const result = await Database.query(
       "INSERT INTO avis (idclient, note, commentaire, statut) VALUES (?, ?, ?, 'en_attente');",
-      [idclient, noteNumerique, commentaireSecurise]
+      [idclient, noteNum, commentaireSecurise]
     );
     res.status(201).json({
       message: "Merci pour votre avis ! Il sera visible après validation par notre équipe.",

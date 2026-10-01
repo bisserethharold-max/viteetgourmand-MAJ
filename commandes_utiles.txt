@@ -8,3 +8,9 @@ npm run dev
 
 # Compiler le CSS
 npm run build:css
+
+# git diff --stat
+→ Vue d'ensemble : liste des fichiers modifiés + nombre de lignes changées (sans le détail du contenu)
+
+# git diff <fichier>
+→ Détail complet : montre ligne par ligne ce qui a changé dans un fichier précis
