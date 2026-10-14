@@ -3,6 +3,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 
 import Database from './config/Database.js';
@@ -19,6 +20,7 @@ import parametresRoutes from './routes/parametresRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
 import trackingRoutes from './routes/trackingRoutes.js';
 import avisRoutes from './routes/avisRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,6 +50,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname,  '..', 'public')));
 
 MongoDatabase.connect().catch(() => {});
@@ -64,7 +67,7 @@ app.use('/api/parametres', parametresRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/tracking', trackingRoutes);
 app.use('/api/avis', avisRoutes);
-
+app.use('/api/contact', contactRoutes);
 app.use((req, res) => {
   res.status(404).json({ error: `La route ${req.originalUrl} n'existe pas.` });
 });
