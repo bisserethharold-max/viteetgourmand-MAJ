@@ -5,6 +5,7 @@ import { envoyerEmailBienvenue } from '../services/emailService.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const REGEX_MOT_DE_PASSE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{10,}$/;
+const SAME_SITE = process.env.NODE_ENV === 'production' ? 'none' : 'strict';
 const FAKE_HASH = "\$2a\$10\$X7E96MvO1vU7L.VvW.9b6O8gA4Y3z7M2W3v7x8y9z0123456789ab";
 
 const authController = {
@@ -72,7 +73,7 @@ const authController = {
       res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: SAME_SITE,
         maxAge: 24 * 60 * 60 * 1000
       });
 
@@ -94,7 +95,7 @@ const authController = {
     res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      sameSite: SAME_SITE
     });
     res.json({ message: "Déconnexion réussie." });
   }
