@@ -708,6 +708,8 @@
     function logout() {
       fetch(API_URL + '/auth/deconnexion', { method: 'POST', credentials: 'include' }).catch(function() {});
       localStorage.removeItem('client');
+      cart = [];
+      renderCart();
       document.getElementById('business-dashboard').classList.add('hidden');
       document.getElementById('user-profile-zone').innerHTML = '<button onclick="toggleModal(\'login-modal\')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">' +
         '<i data-lucide="user" class="w-4 h-4"></i> Connexion' +
