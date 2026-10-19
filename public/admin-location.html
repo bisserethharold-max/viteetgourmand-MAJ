@@ -100,7 +100,6 @@
       chargerListeLocations();
     }
 
-    function getToken() { return localStorage.getItem('token'); }
 
     async function chargerListeLocations() {
       const container = document.getElementById('liste-locations');
@@ -183,9 +182,9 @@
         const res = await fetch(url, {
           method,
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`
+            'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify(payload)
         });
         const data = await res.json();
@@ -209,7 +208,7 @@
       try {
         const res = await fetch(`${API_URL}/locations/${idlocation}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${getToken()}` }
+          credentials: 'include'
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);

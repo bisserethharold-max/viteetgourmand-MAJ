@@ -120,9 +120,6 @@
       chargerListeMenus();
     }
 
-    function getToken() {
-      return localStorage.getItem('token');
-    }
 
     async function chargerListeMenus() {
       const container = document.getElementById('liste-menus');
@@ -208,9 +205,9 @@
         const res = await fetch(url, {
           method,
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`
+            'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify(payload)
         });
         const data = await res.json();
@@ -234,7 +231,7 @@
       try {
         const res = await fetch(`${API_URL}/menus/${idmenu}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${getToken()}` }
+          credentials: 'include'
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);

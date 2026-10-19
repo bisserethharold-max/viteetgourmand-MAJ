@@ -47,13 +47,12 @@
       chargerCommandes();
     }
 
-    function getToken() { return localStorage.getItem('token'); }
 
     async function chargerCommandes() {
       const container = document.getElementById('liste-commandes');
       try {
         const res = await fetch(`${API_URL}/commandes/toutes`, {
-          headers: { 'Authorization': `Bearer ${getToken()}` }
+          credentials: 'include'
         });
         const data = await res.json();
         const commandes = data.commandes || [];
@@ -93,9 +92,9 @@
         const res = await fetch(`${API_URL}/commandes/${idcommande}/statut`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`
+            'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify({ statut })
         });
         const data = await res.json();

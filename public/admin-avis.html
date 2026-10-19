@@ -49,7 +49,6 @@
       chargerAvis();
     }
 
-    function getToken() { return localStorage.getItem('token'); }
 
     const LIBELLES_STATUT = { en_attente: 'En attente', valide: 'Validé', refuse: 'Refusé' };
     const COULEURS_STATUT = {
@@ -81,7 +80,7 @@
     async function chargerAvis() {
       try {
         const res = await fetch(`${API_URL}/avis/tous`, {
-          headers: { 'Authorization': `Bearer ${getToken()}` }
+          credentials: 'include'
         });
         const data = await res.json();
         const avis = data.avis || [];
@@ -99,9 +98,9 @@
         const res = await fetch(`${API_URL}/avis/${idavis}/statut`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`
+            'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify({ statut })
         });
         const data = await res.json();
@@ -117,7 +116,7 @@
       try {
         const res = await fetch(`${API_URL}/avis/${idavis}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${getToken()}` }
+          credentials: 'include'
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);

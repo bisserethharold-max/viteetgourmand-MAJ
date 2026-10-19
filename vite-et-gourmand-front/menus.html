@@ -283,9 +283,9 @@
 
     async function commanderMenu(idmenu, titre, prix, stock) {
       const msgDiv = document.getElementById('commande-message');
-      const token = localStorage.getItem('token');
+      const connecte = !!localStorage.getItem('client');
 
-      if (!token) {
+      if (!connecte) {
         msgDiv.className = "mt-4 text-xs font-semibold p-3 rounded-lg bg-amber-50 text-amber-700 border border-amber-200";
         msgDiv.textContent = "Connectez-vous depuis la page d'accueil pour passer commande.";
         msgDiv.classList.remove('hidden');
@@ -322,9 +322,9 @@
         const res = await fetch(`${API_URL}/commandes`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify({
             menus: [{ idmenu, quantite: 1, prix_unitaire: Number(prix), nombre_personnes: nombrePersonnes }],
             distance_km: distanceKm,
