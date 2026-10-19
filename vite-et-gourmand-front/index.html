@@ -444,14 +444,14 @@
 
     async function checkoutCart() {
       const msgDiv = document.getElementById('checkout-message');
-      const token = localStorage.getItem('token');
+      const connecte = !!localStorage.getItem('client');
 
       if (cart.length === 0) {
         alert("Votre panier est vide.");
         return;
       }
 
-      if (!token) {
+      if (!connecte) {
         msgDiv.className = "text-xs font-semibold p-3 rounded-lg mb-3 bg-amber-50 text-amber-700 border border-amber-200";
         msgDiv.textContent = "Connectez-vous pour valider votre commande.";
         msgDiv.classList.remove('hidden');
@@ -469,9 +469,9 @@
         const res = await fetch(API_URL + '/commandes', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify({ total: total, menus: menus })
         });
         const data = await res.json();
@@ -521,12 +521,12 @@
         const res = await fetch(API_URL + '/auth/connexion', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ email: email, password: password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Erreur de connexion.");
 
-        localStorage.setItem('token', data.token);
         localStorage.setItem('client', JSON.stringify(data.client));
         toggleModal('login-modal');
         afficherSessionActive(data.client);
@@ -552,6 +552,7 @@
         const res = await fetch(API_URL + '/auth/inscription', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ nom: nom, prenom: prenom, telephone: telephone, adresse: adresse, email: email, password: password })
         });
         const data = await res.json();
@@ -588,9 +589,9 @@
           }).join('');
         }
 
-        const token = localStorage.getItem('token');
-        document.getElementById('zone-depot-avis').classList.toggle('hidden', !token);
-        document.getElementById('avis-connexion-requise').classList.toggle('hidden', !!token);
+        const connecte = !!localStorage.getItem('client');
+        document.getElementById('zone-depot-avis').classList.toggle('hidden', !connecte);
+        document.getElementById('avis-connexion-requise').classList.toggle('hidden', connecte);
       } catch (error) {
         container.innerHTML = '<p class="col-span-3 text-center text-red-500 text-sm">Impossible de charger les avis.</p>';
       }
@@ -599,7 +600,7 @@
     document.getElementById('form-avis').addEventListener('submit', async function (e) {
       e.preventDefault();
       const msgDiv = document.getElementById('avis-message');
-      const token = localStorage.getItem('token');
+      const connecte = !!localStorage.getItem('client');
       const note = Number(document.getElementById('avis-note').value);
       const commentaire = document.getElementById('avis-commentaire').value;
 
@@ -607,9 +608,9 @@
         const res = await fetch(API_URL + '/avis', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify({ note: note, commentaire: commentaire })
         });
         const data = await res.json();
@@ -663,13 +664,13 @@
 
     async function chargerMesCommandes() {
       const container = document.getElementById('mes-commandes-list');
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      const connecte = !!localStorage.getItem('client');
+      if (!connecte) return;
 
       container.innerHTML = '<p class="text-stone-500 text-xs">Chargement...</p>';
       try {
         const res = await fetch(API_URL + '/commandes', {
-          headers: { 'Authorization': 'Bearer ' + token }
+          credentials: 'include'
         });
         const data = await res.json();
         const commandes = data.commandes || [];
@@ -705,7 +706,7 @@
     }
 
     function logout() {
-      localStorage.removeItem('token');
+      fetch(API_URL + '/auth/deconnexion', { method: 'POST', credentials: 'include' }).catch(function() {});
       localStorage.removeItem('client');
       document.getElementById('business-dashboard').classList.add('hidden');
       document.getElementById('user-profile-zone').innerHTML = '<button onclick="toggleModal(\'login-modal\')" class="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-[#8f3d35] border border-stone-200 rounded-full px-4 py-2 transition bg-white shadow-sm">' +
@@ -716,13 +717,14 @@
     }
 
     function verifierSessionExistante() {
-      const token = localStorage.getItem('token');
-      const client = localStorage.getItem('client');
-      if (token && client) {
-        afficherSessionActive(JSON.parse(client));
-      }
+      fetch(API_URL + '/user/profil', { credentials: 'include' })
+        .then(function(res) {
+          if (!res.ok) { localStorage.removeItem('client'); return; }
+          const client = localStorage.getItem('client');
+          if (client) afficherSessionActive(JSON.parse(client));
+        })
+        .catch(function() {});
     }
-
     document.getElementById('request-form').addEventListener('submit', async function(e) {
       e.preventDefault();
 
