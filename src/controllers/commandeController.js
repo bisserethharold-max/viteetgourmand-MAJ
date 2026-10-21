@@ -85,30 +85,34 @@ export const passerCommande = async (req, res) => {
     const fraisLivraison = await calculerFraisLivraison(distance_km, ville_livraison);
     const total = sousTotal - montantReductionTotal + fraisLivraison;
 
-    const resultCommande = await Database.query(
-      `INSERT INTO commandes (idclient, total, statut, distance_km, frais_livraison, reduction_appliquee, mode_paiement, adresse_livraison, ville_livraison, date_prestation, heure_livraison)
-       VALUES (?, ?, 'En attente', ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [idclient, total, distance_km, fraisLivraison, montantReductionTotal, mode_paiement, adresse_livraison, ville_livraison, date_prestation, heure_livraison]
-    );
-    const idcommande = resultCommande.insertId;
+    const idcommande = await Database.transaction(async (conn) => {
+      const [resultCommande] = await conn.execute(
+        `INSERT INTO commandes (idclient, total, statut, distance_km, frais_livraison, reduction_appliquee, mode_paiement, adresse_livraison, ville_livraison, date_prestation, heure_livraison)
+         VALUES (?, ?, 'En attente', ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [idclient, total, distance_km, fraisLivraison, montantReductionTotal, mode_paiement, adresse_livraison, ville_livraison, date_prestation, heure_livraison]
+      );
+      const idNouvelleCommande = resultCommande.insertId;
 
-    for (const produit of produits) {
-      await Database.query(
-        "INSERT INTO details_commande (idcommande, idproduit, idmenu, quantite, prix_unitaire) VALUES (?, ?, NULL, ?, ?)",
-        [idcommande, produit.idproduit, produit.quantite, produit.prix_unitaire]
-      );
-    }
+      for (const produit of produits) {
+        await conn.execute(
+          "INSERT INTO details_commande (idcommande, idproduit, idmenu, quantite, prix_unitaire) VALUES (?, ?, NULL, ?, ?)",
+          [idNouvelleCommande, produit.idproduit, produit.quantite, produit.prix_unitaire]
+        );
+      }
 
-    for (const menu of menus) {
-      await Database.query(
-        "INSERT INTO details_commande (idcommande, idproduit, idmenu, quantite, prix_unitaire) VALUES (?, NULL, ?, ?, ?)",
-        [idcommande, menu.idmenu, menu.quantite, menu.prix_unitaire]
-      );
-      await Database.query(
-        "UPDATE menu SET stock_disponible = GREATEST(stock_disponible - ?, 0) WHERE idmenu = ?",
-        [menu.quantite, menu.idmenu]
-      );
-    }
+      for (const menu of menus) {
+        await conn.execute(
+          "INSERT INTO details_commande (idcommande, idproduit, idmenu, quantite, prix_unitaire) VALUES (?, NULL, ?, ?, ?)",
+          [idNouvelleCommande, menu.idmenu, menu.quantite, menu.prix_unitaire]
+        );
+        await conn.execute(
+          "UPDATE menu SET stock_disponible = GREATEST(stock_disponible - ?, 0) WHERE idmenu = ?",
+          [menu.quantite, menu.idmenu]
+        );
+      }
+
+      return idNouvelleCommande;
+    });
 
     loggerCommande({
       idcommande,

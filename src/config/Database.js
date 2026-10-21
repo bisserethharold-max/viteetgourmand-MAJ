@@ -45,6 +45,24 @@ class Database {
       throw error;
     }
   }
+
+  async transaction(callback) {
+    if (!this.pool) {
+      throw new Error("La base de données n'est pas connectée.");
+    }
+    const conn = await this.pool.getConnection();
+    try {
+      await conn.beginTransaction();
+      const resultat = await callback(conn);
+      await conn.commit();
+      return resultat;
+    } catch (error) {
+      await conn.rollback();
+      throw error;
+    } finally {
+      conn.release();
+    }
+  }
 }
 
 export default new Database();
