@@ -15,8 +15,17 @@ export const passerCommande = async (req, res) => {
       adresse_livraison = '', ville_livraison = '', date_prestation = null, heure_livraison = ''
     } = req.body;
 
+    if (!Array.isArray(produits) || !Array.isArray(menus)) {
+      return res.status(400).json({ error: "Format de panier invalide." });
+    }
+
     if (produits.length === 0 && menus.length === 0) {
       return res.status(400).json({ error: "Le panier est vide." });
+    }
+
+    const quantiteValide = (ligne) => ligne && Number.isInteger(Number(ligne.quantite)) && Number(ligne.quantite) >= 1 && Number(ligne.quantite) <= 100;
+    if (![...produits, ...menus].every(quantiteValide)) {
+      return res.status(400).json({ error: "Quantité invalide : un entier entre 1 et 100 est attendu." });
     }
 
     if (mode_paiement === 'carte') {
