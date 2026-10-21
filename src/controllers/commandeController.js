@@ -38,6 +38,22 @@ export const passerCommande = async (req, res) => {
       }
     }
 
+    for (const p of produits) {
+      const rows = await Database.query("SELECT prix FROM produits WHERE idproduit = ? AND disponible = 1;", [p.idproduit]);
+      if (rows.length === 0) {
+        return res.status(400).json({ error: "Produit introuvable ou indisponible." });
+      }
+      p.prix_unitaire = Number(rows[0].prix);
+    }
+
+    for (const m of menus) {
+      const rows = await Database.query("SELECT prix_base FROM menu WHERE idmenu = ? AND actif = 1;", [m.idmenu]);
+      if (rows.length === 0) {
+        return res.status(400).json({ error: "Menu introuvable ou indisponible." });
+      }
+      m.prix_unitaire = Number(rows[0].prix_base);
+    }
+
     const sousTotalProduits = produits.reduce((sum, p) => sum + p.prix_unitaire * p.quantite, 0);
     let sousTotalMenus = 0;
     let montantReductionTotal = 0;
