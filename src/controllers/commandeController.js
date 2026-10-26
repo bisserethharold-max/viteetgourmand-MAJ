@@ -105,10 +105,13 @@ export const passerCommande = async (req, res) => {
           "INSERT INTO details_commande (idcommande, idproduit, idmenu, quantite, prix_unitaire) VALUES (?, NULL, ?, ?, ?)",
           [idNouvelleCommande, menu.idmenu, menu.quantite, menu.prix_unitaire]
         );
-        await conn.execute(
-          "UPDATE menu SET stock_disponible = GREATEST(stock_disponible - ?, 0) WHERE idmenu = ?",
-          [menu.quantite, menu.idmenu]
+        const [majStock] = await conn.execute(
+          "UPDATE menu SET stock_disponible = stock_disponible - ? WHERE idmenu = ? AND stock_disponible >= ?",
+          [menu.quantite, menu.idmenu, menu.quantite]
         );
+        if (majStock.affectedRows === 0) {
+          throw new Error('STOCK_INSUFFISANT');
+        }
       }
 
       return idNouvelleCommande;
@@ -123,6 +126,9 @@ export const passerCommande = async (req, res) => {
 
     return res.status(201).json({ idcommande, total });
   } catch (error) {
+    if (error.message === 'STOCK_INSUFFISANT') {
+      return res.status(409).json({ error: "Stock insuffisant pour l'un des menus commandés." });
+    }
     return res.status(500).json({ error: "Impossible de valider la commande." });
   }
 };
