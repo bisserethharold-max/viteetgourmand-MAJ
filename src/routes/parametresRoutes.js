@@ -5,6 +5,6 @@ import { getParametres, modifierParametres } from '../controllers/parametresCont
 const router = express.Router();
 
 router.get('/', getParametres);
-router.put('/', verifierAuthentification, verifierRole('admin'), modifierParametres);
+router.put('/', verifierAuthentification, verifierRole(['admin']), modifierParametres);
 
 export default router;
